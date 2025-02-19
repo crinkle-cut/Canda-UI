@@ -41,20 +41,20 @@ function App() {
   });
 
   return (
-    <main class="flex flex-col w-full h-full min-h-screen">
+    <main class="flex flex-col w-full h-full min-h-screen select-none">
       <div
         class="title-bar w-full text-white text-sm font-medium flex items-center justify-center select-none border-b border-white/10 z-30"
         style={{ "-webkit-app-region": "drag" }}
         data-tauri-drag-region
       ></div>
-      <div class="main-content flex h-full relative">
+      <div class="main-content flex h-full relative select-none">
         <div
-          class={`side-menu bg-black/60 border-2 border-white/40 rounded-xl transition-all duration-300 mt-40 absolute top-0 left-0 overflow-hidden w-auto hover:border-white/80 ${
+          class={`side-menu bg-black/60 border-2 border-white/40 rounded-r-xl transition-all duration-300 mt-40 absolute top-0 left-0 overflow-hidden w-auto hover:border-white/80 ${
             menuExpanded() ? "h-[435px]" : "h-11"
           } flex-shrink-0`}
         >
           <div
-            class="p-2 cursor-pointer hover:border-white/80 rounded-xl"
+            class="pt-2 pb-2 cursor-pointer hover:border-white/80 rounded-xl"
             onClick={() => setMenuExpanded(!menuExpanded())}
           >
             <svg
@@ -64,14 +64,14 @@ function App() {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
+              stroke-width="1.5"
               stroke-linecap="round"
               stroke-linejoin="round"
-              class="lucide lucide-menu"
+              class={`lucide lucide-chevron-right transition-all duration-300 ${
+                menuExpanded() ? "rotate-180 translate-x-2" : ""
+              }`}
             >
-              <line x1="4" x2="20" y1="12" y2="12" />
-              <line x1="4" x2="20" y1="6" y2="6" />
-              <line x1="4" x2="20" y1="18" y2="18" />
+              <path d="m9 18 6-6-6-6" />
             </svg>
           </div>
           {menuExpanded() && (
@@ -151,8 +151,8 @@ function App() {
             </ul>
           )}
         </div>
-        <div ref={(el) => (editorContainer = el)} class="editor-container flex-grow"></div>
-        <div class="button-bar flex relative">
+        <div ref={(el) => (editorContainer = el)} class={`editor-container select-none flex-grow transition-all duration-300 ${menuExpanded() ? 'w-[calc(100%-5rem)]' : 'w-[calc(98%-3rem)]'}`}></div>
+        <div class={`button-bar flex relative transition-all duration-300 ${menuExpanded() ? 'w-[calc(100%-5rem)]' : 'w-[calc(98%-3rem)]'}`}>
           <div class="attach-button rounded-lg pb-2 pt-2 pl-3 pr-3 select-none cursor-pointer border-2 border-white/50 hover:border-red-500 transition-all delay-50 active:scale-95">
             Attach
           </div>
