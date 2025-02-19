@@ -50,7 +50,7 @@ main {
   display: flex;
   justify-content: center;
   min-height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   flex-grow: 1 !important;
   -webkit-backdrop-filter: blur(2px) !important;
@@ -199,7 +199,7 @@ button:active {
 .button-bar {
   display: flex;
   width: 90%;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.4);
   border: 2px solid rgba(255, 255, 255, 0.4);
   border-radius: 12px;
   margin: auto;
@@ -212,6 +212,7 @@ button:active {
 .side-menu {
   margin-left: 12px;
   margin-top: 45px;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 
