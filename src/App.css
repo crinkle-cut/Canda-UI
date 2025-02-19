@@ -1,0 +1,220 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: '0xProto';
+  src: url('./fonts/0xProto-Regular.woff2') format('woff2'),
+       url('./fonts/0xProto-Regular.otf') format('otf'),
+       url('./fonts/0xProto-Regular.ttf') format('ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  color: #0f0f0f;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+html, body {
+  height: 100% !important;
+  margin: 0;
+  padding: 0;
+  background-color: transparent !important;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+#root, html, body {
+  height: 100% !important;
+  width: 100% !important;
+  margin: 0;
+  padding: 0;
+  blur: 2px;
+}
+
+main {
+  margin: 0 !important;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  flex-grow: 1 !important;
+  -webkit-backdrop-filter: blur(2px) !important;
+  backdrop-filter: blur(2px) !important;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: 0.75s;
+}
+
+.logo.vite:hover {
+  filter: drop-shadow(0 0 2em #747bff);
+}
+
+.logo.solid:hover {
+  filter: drop-shadow(0 0 2em #2f5d90);
+}
+
+.logo.tauri:hover {
+  filter: drop-shadow(0 0 2em #24c8db);
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #535bf2;
+}
+
+h1 {
+  text-align: center;
+}
+
+input,
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  color: #0f0f0f;
+  background-color: #ffffff;
+  transition: border-color 0.25s;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+  outline: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: #396cd8;
+}
+
+button:active {
+  border-color: #396cd8;
+  background-color: #e8e8e8;
+}
+
+#greet-input {
+  margin-right: 5px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #f6f6f6;
+    background-color: #2f2f2f;
+  }
+
+  a:hover {
+    color: #24c8db;
+  }
+
+  input,
+  button {
+    color: #ffffff;
+    background-color: #0f0f0f98;
+  }
+
+  button:active {
+    background-color: #0f0f0f69;
+  }
+}
+
+.title-bar {
+  height: 30px !important;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 14px;
+  font-weight: medium;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-app-region: drag;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.main-content {
+  padding-top: 0px;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.editor-container {
+  height: 350px;
+  width: 90%;
+  margin: auto;
+  margin-bottom: 10px;
+  margin-top: 45px;
+  margin-right: 15px;
+  border: 2px solid rgba(100, 100, 100, 0.8);
+  border-radius: 12px;
+  background-color: #1e1e1e;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  top: 0;
+  left: 0;
+}
+
+.button-bar {
+  display: flex;
+  width: 90%;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  margin: auto;
+  margin-top: 2px;
+  padding: 2px;
+  margin-right: 15px;
+  margin-bottom: 15px;
+}
+
+.side-menu {
+  margin-left: 12px;
+  margin-top: 45px;
+}
+
+
+
+
+/* bunch of shit here doesnt even work but since idk what even works ima just let it be */
