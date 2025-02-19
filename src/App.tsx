@@ -54,7 +54,7 @@ function App() {
           } flex-shrink-0`}
         >
           <div
-            class="pt-2 pb-2 cursor-pointer hover:border-white/80 rounded-xl"
+            class="pt-2 pb-2 cursor-pointer hover:border-white/80 rounded-xl transform-gpu"
             onClick={() => setMenuExpanded(!menuExpanded())}
           >
             <svg
@@ -67,7 +67,7 @@ function App() {
               stroke-width="1.5"
               stroke-linecap="round"
               stroke-linejoin="round"
-              class={`lucide lucide-chevron-right transition-all duration-300 ${
+              class={`lucide lucide-chevron-right transition-all duration-300 transform-gpu ${
                 menuExpanded() ? "rotate-180 translate-x-2" : ""
               }`}
             >
@@ -76,7 +76,7 @@ function App() {
           </div>
           {menuExpanded() && (
             <ul class="flex flex-col min-h-96 justify-between">
-              <li class="p-2 transition-all duration-300 hover:scale-110 flex-none">
+              <li class="p-2 transition-all duration-300 hover:scale-110 flex-none transform-gpu">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -92,7 +92,7 @@ function App() {
                   <path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2" />
                 </svg>
               </li>
-              <li class="p-2 transition-all duration-300 hover:scale-110 flex-none">
+              <li class="p-2 transition-all duration-300 hover:scale-110 flex-none transform-gpu">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -110,7 +110,7 @@ function App() {
                   <path d="M7 3v4a1 1 0 0 0 1 1h7" />
                 </svg>
               </li>
-              <li class="p-2 mb-auto transition-all duration-300 hover:scale-110 flex-none">
+              <li class="p-2 mb-auto transition-all duration-300 hover:scale-110 flex-none transform-gpu">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -128,7 +128,7 @@ function App() {
                 </svg>
               </li>
               <li class="grow"></li>
-              <li class="p-2 transition-all duration-300 hover:scale-110 flex-none">
+              <li class="p-2 transition-all duration-300 hover:scale-110 flex-none transform-gpu">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -151,12 +151,15 @@ function App() {
             </ul>
           )}
         </div>
-        <div ref={(el) => (editorContainer = el)} class={`editor-container select-none flex-grow transition-all duration-300 ${menuExpanded() ? 'w-[calc(100%-5rem)]' : 'w-[calc(98%-3rem)]'}`}></div>
-        <div class={`button-bar flex relative transition-all duration-300 ${menuExpanded() ? 'w-[calc(100%-5rem)]' : 'w-[calc(98%-3rem)]'}`}>
+        <div ref={(el) => (editorContainer = el)} class={`editor-container select-none flex-grow transition-all duration-300 transform-gpu ${menuExpanded() ? 'w-[calc(100%-5rem)]' : 'w-[calc(98%-3rem)]'}`}></div>
+        <div class={`button-bar flex relative transition-all duration-300 transform-gpu ${menuExpanded() ? 'w-[calc(100%-5rem)]' : 'w-[calc(98%-3rem)]'}`}>
           <div class="attach-button rounded-lg pb-2 pt-2 pl-3 pr-3 select-none cursor-pointer border-2 border-white/50 hover:border-red-500 transition-all delay-50 active:scale-95">
             Attach
           </div>
-          <div class="execute-button rounded-lg ml-auto pb-2 pt-2 pl-3 pr-3 select-none cursor-pointer border-2 border-white/50 hover:border-green-500 transition-all delay-50 active:scale-95">
+          <div class="execute-button rounded-lg mr-1 ml-auto pb-2 pt-2 pl-3 pr-3 select-none cursor-pointer border-2 border-white/50 hover:border-orange-400 transition-all delay-50 active:scale-95">
+            Clear
+          </div>
+          <div class="execute-button rounded-lg pb-2 pt-2 pl-3 pr-3 select-none cursor-pointer border-2 border-white/50 hover:border-green-500 transition-all delay-50 active:scale-95">
             Execute
           </div>
         </div>
