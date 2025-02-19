@@ -50,7 +50,7 @@ main {
   display: flex;
   justify-content: center;
   min-height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.6);
   border-radius: 10px;
   flex-grow: 1 !important;
   -webkit-backdrop-filter: blur(2px) !important;
