@@ -21,6 +21,7 @@ function App() {
         fontFamily: "'0xProto', 'Menlo', 'Monaco', monospace",
         fontSize: 12,
         automaticLayout: true,
+        cursorSmoothCaretAnimation: true,
       });
 
       const resizeObserver = new ResizeObserver(() => {
@@ -39,6 +40,8 @@ function App() {
       editorInstance.dispose();
     }
   });
+
+  
 
   return (
     <main class="flex flex-col w-full h-full min-h-screen select-none">
@@ -151,8 +154,8 @@ function App() {
             </ul>
           )}
         </div>
-        <div ref={(el) => (editorContainer = el)} class={`editor-container select-none flex-grow transition-all duration-300 transform-gpu ${menuExpanded() ? 'w-[calc(100%-5rem)]' : 'w-[calc(98%-3rem)]'}`}></div>
-        <div class={`button-bar flex relative transition-all duration-300 transform-gpu ${menuExpanded() ? 'w-[calc(100%-5rem)]' : 'w-[calc(98%-3rem)]'}`}>
+        <div ref={(el) => (editorContainer = el)} class={`editor-container select-none flex-grow transition-all duration-300 transform-gpu border-2 border-white/40 hover:border-white/80 ${menuExpanded() ? 'w-[calc(100%-5rem)]' : 'w-[calc(98%-3rem)]'}`}></div>
+        <div class={`button-bar border-2 border-white/40 flex relative transition-all duration-300 transform-gpu hover:border-white/80 ${menuExpanded() ? 'w-[calc(100%-5rem)]' : 'w-[calc(98%-3rem)]'}`}>
           <div class="attach-button rounded-lg pb-2 pt-2 pl-3 pr-3 select-none cursor-pointer border-2 border-white/50 hover:border-red-500 transition-all delay-50 active:scale-95">
             Attach
           </div>
