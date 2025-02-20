@@ -167,7 +167,7 @@ function App() {
           }`}
         ></div>
         <div
-          class={`button-bar flex relative ${
+          class={`button-bar flex relative transition-all duration-300 transform-gpu ${
             menuExpanded() ? "w-[calc(100%-5rem)]" : "w-[calc(98%-3rem)]"
           }`}
         >
