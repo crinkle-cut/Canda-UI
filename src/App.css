@@ -128,6 +128,8 @@ main {
 
 
 /* You can see I tried to do something here, but I couldnt do it so i gave up :( */
+
+/*
 .monaco-editor,
 .monaco-editor .inputarea.ime-input,
 .monaco-editor-background {
@@ -137,7 +139,7 @@ main {
 .monaco-editor .margin {
   background-color: transparent !important;
 }
-
+*/
 
 
 /* bunch of shit here doesnt even work but since idk what even works ima just let it be */
