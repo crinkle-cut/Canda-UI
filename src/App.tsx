@@ -1,5 +1,5 @@
 import { createSignal, onMount, onCleanup } from "solid-js";
-import * as MonacoEditor from "monaco-editor";
+import * as Monaco from "monaco-editor";
 import githubDarkTheme from "./themes/github-dark.json";
 import "./App.css";
 import "./output.css";
@@ -7,21 +7,29 @@ import "./input.css"; // Maybe useful
 
 function App() {
   let editorContainer: HTMLDivElement | null = null;
-  let editorInstance: MonacoEditor.editor.IStandaloneCodeEditor | null = null;
+  let editorInstance: Monaco.editor.IStandaloneCodeEditor | null = null;
   const [menuExpanded, setMenuExpanded] = createSignal(false);
+
+  const themeData: Monaco.editor.IStandaloneThemeData = {
+    ...githubDarkTheme,
+    base: "vs-dark",
+  };
+
+  Monaco.editor.defineTheme("github-dark", themeData);
+  Monaco.editor.setTheme("github-dark");
 
   onMount(() => {
     if (editorContainer) {
-      MonacoEditor.editor.defineTheme("github-dark", githubDarkTheme); // idk how this even work im just happy it does
-      MonacoEditor.editor.setTheme("github-dark");
-      editorInstance = MonacoEditor.editor.create(editorContainer, {
+      Monaco.editor.defineTheme("github-dark", githubDarkTheme); // idk how this even work im just happy it does
+      Monaco.editor.setTheme("github-dark");
+      editorInstance = Monaco.editor.create(editorContainer, {
         value: `-- hello!`,
         language: "lua",
         theme: "github-dark",
         fontFamily: "'0xProto', 'Menlo', 'Monaco', monospace",
-        fontSize: 12,
+        fontSize: 14,
         automaticLayout: true,
-        cursorSmoothCaretAnimation: true, // why does the fuckass vscode mark this as an error it clearly works
+        cursorSmoothCaretAnimation: "on", // it works now :)
       });
 
       const resizeObserver = new ResizeObserver(() => {
@@ -159,7 +167,7 @@ function App() {
           }`}
         ></div>
         <div
-          class={`button-bar border-2 border-white/40 flex relative transition-all duration-300 transform-gpu hover:border-white/80 ${
+          class={`button-bar flex relative ${
             menuExpanded() ? "w-[calc(100%-5rem)]" : "w-[calc(98%-3rem)]"
           }`}
         >

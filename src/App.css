@@ -113,11 +113,9 @@ main {
 
 .button-bar {
   display: flex;
-  background-color: rgba(0, 0, 0, 0.4);
   border-radius: 12px;
   margin: auto;
   margin-top: 2px;
-  padding: 2px;
   margin-right: 15px;
   margin-bottom: 15px;
 }
@@ -128,6 +126,17 @@ main {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
+
+/* You can see I tried to do something here, but I couldnt do it so i gave up :( */
+.monaco-editor,
+.monaco-editor .inputarea.ime-input,
+.monaco-editor-background {
+    background-color: transparent !important;
+}
+
+.monaco-editor .margin {
+  background-color: transparent !important;
+}
 
 
 
