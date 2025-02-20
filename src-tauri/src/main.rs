@@ -7,13 +7,15 @@ fn main() {
     tauri::Builder::default()
         .setup(|app| {
             let window = app.get_webview_window("main").unwrap();
+            
 
             #[cfg(target_os = "macos")]
+
             apply_vibrancy(
                 &window,
                 NSVisualEffectMaterial::HudWindow,
                 Some(NSVisualEffectState::FollowsWindowActiveState),
-                None,
+                Some(12.0),
             )
             .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
 

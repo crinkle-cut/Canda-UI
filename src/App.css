@@ -20,6 +20,11 @@
   --font-montserrat: Montserrat, sans-serif;
 }
 
+#root, main {
+  overflow: hidden;
+  border-radius: 10px;
+}
+
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
@@ -28,32 +33,23 @@
   color: #0f0f0f;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  border-radius: 10px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
 
-html, body {
+html {
   height: 100% !important;
   margin: 0;
   padding: 0;
   background-color: transparent !important;
   background: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  border: none;
+  border-top-left-radius: 10px;
 }
 
-#root {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-#root, html, body {
-  height: 100% !important;
-  width: 100% !important;
-  margin: 0;
-  padding: 0;
-  blur: 2px;
-}
 
 main {
   margin: 0 !important;
@@ -80,7 +76,7 @@ main {
 .title-bar {
   height: 30px !important;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.5);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   color: rgba(0, 0, 0, 0.7);
   font-size: 14px;
@@ -88,7 +84,6 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  -webkit-app-region: drag;
   position: fixed;
   top: 0;
   left: 0;
@@ -104,6 +99,7 @@ main {
   justify-content: center;
   align-items: flex-start;
   flex-direction: column;
+  border-radius: 10px;
 }
 
 .editor-container {

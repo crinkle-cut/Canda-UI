@@ -17,9 +17,11 @@
         "width": 840,
         "height": 500,
         "transparent": true,
-        "decorations": true,
-        "titleBarStyle": "Overlay",
-        "resizable": false
+        "decorations": false,
+        "titleBarStyle": "Transparent",
+        "resizable": false,
+        "hiddenTitle": true,
+        "shadow": false
       }
     ],
     "macOSPrivateApi": true,
