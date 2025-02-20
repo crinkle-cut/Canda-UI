@@ -15,6 +15,7 @@
     "@codemirror/lang-javascript": "^6.2.3",
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.36.3",
+    "@fontsource/montserrat": "^5.1.1",
     "@tailwindcss/cli": "^4.0.7",
     "@tailwindcss/postcss": "^4.0.7",
     "@tailwindcss/vite": "^4.0.7",

@@ -4,7 +4,7 @@ import "./App.css";
 import "./output.css";
 import "./input.css"; // Maybe useful
 
-const espressoLibreTheme = {
+const customTheme = {
   base: "vs-dark",
   inherit: true,
   rules: [
@@ -196,14 +196,14 @@ function App() {
   const [menuExpanded, setMenuExpanded] = createSignal(false);
 
   onMount(async () => {
-    Monaco.editor.defineTheme("espresso-libre", espressoLibreTheme);
+    Monaco.editor.defineTheme("customTheme", customTheme);
 
     if (editorContainer) {
-      Monaco.editor.setTheme("espresso-libre"); // I made sure this works by giving it no use lmao
+      Monaco.editor.setTheme("customTheme"); // I made sure this works by giving it no use lmao
       editorInstance = Monaco.editor.create(editorContainer, {
         value: `-- hello!`,
         language: "lua",
-        fontFamily: "'0xProto', 'Menlo', 'Monaco', monospace",
+        fontFamily: "'0xProto'",
         fontSize: 14,
         automaticLayout: true,
         cursorSmoothCaretAnimation: "on",
@@ -283,7 +283,7 @@ function App() {
           </div>
           {menuExpanded() && (
             <ul class="flex flex-col min-h-96 justify-between">
-              <li class="p-2 w-full transition-all duration-300 hover:bg-white/10 flex-none transform-gpu flex items-center border-t-1 border-white/40">
+              <li class="p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t-1 border-white/40">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -300,7 +300,7 @@ function App() {
                 </svg>
                 <div class="select-none cursor-pointer ml-2">Open file</div>
               </li>
-              <li class="p-2 w-full transition-all duration-300 hover:bg-white/10 flex-none transform-gpu flex items-center border-t-1 border-b-1 border-white/40">
+              <li class="p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t-1 border-b-1 border-white/40">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -319,7 +319,7 @@ function App() {
                 </svg>
                 <div class="select-none cursor-pointer ml-2">Save file</div>
               </li>
-              <li class="p-2 w-full transition-all duration-300 hover:bg-white/10 flex-none transform-gpu flex items-center border-b-1 border-white/40">
+              <li class="p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-b-1 border-white/40">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -338,7 +338,7 @@ function App() {
                 <div class="select-none cursor-pointer ml-2">iSpy</div>
               </li>
               <li class="grow"></li>
-              <li class="p-2 transition-all duration-300 hover:bg-white/10 flex-none transform-gpu flex items-center border-t-1 border-b-1 border-white/40">
+              <li class="p-2 transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t-1 border-b-1 border-white/40 cursor-pointer">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -349,14 +349,14 @@ function App() {
                   stroke-width="1.2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  class="lucide lucide-settings-2 mr-1 select-none cursor-pointer"
+                  class="lucide lucide-settings-2 mr-1 select-none"
                 >
                   <path d="M20 7h-9" />
                   <path d="M14 17H5" />
                   <circle cx="17" cy="17" r="3" />
                   <circle cx="7" cy="7" r="3" />
                 </svg>
-                <div class="select-none cursor-pointer ml-2">Settings</div>
+                <div class="select-none cursor-pointer ml-2 font-montserrat">Settings</div>
               </li>
               <li></li>
             </ul>
@@ -373,7 +373,7 @@ function App() {
             menuExpanded() ? "w-[calc(89%-5rem)]" : "w-[calc(98%-3rem)]"
           }`}
         >
-          <div class="attach-button rounded-lg pb-2 pt-2 pl-3 pr-3 select-none cursor-pointer border-2 border-white/50 hover:border-red-500 transition-all delay-50 active:scale-95">
+          <div class="attach-button rounded-lg pb-2 pt-2 pl-3 pr-3 select-none cursor-pointer border-2 border-white/50 hover:border-red-500 transition-all delay-50 active:scale-95 font-montserrat">
             Attach
           </div>
           <div class="execute-button rounded-lg mr-1 ml-auto pb-2 pt-2 pl-3 pr-3 select-none cursor-pointer border-2 border-white/50 hover:border-orange-400 transition-all delay-50 active:scale-95">

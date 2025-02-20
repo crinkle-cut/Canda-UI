@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@fontsource/montserrat/index.css";
 
 @font-face {
   font-family: '0xProto';
@@ -7,6 +8,16 @@
        url('./fonts/0xProto-Regular.ttf') format('ttf');
   font-weight: normal;
   font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+
+  src: url('./fonts/Montserrat-Regular.ttf');
+}
+
+@theme {
+  --font-montserrat: Montserrat, sans-serif;
 }
 
 :root {
