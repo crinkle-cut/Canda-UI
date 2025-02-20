@@ -120,26 +120,4 @@ main {
   margin-bottom: 15px;
 }
 
-.side-menu {
-  margin-left: 0px;
-  margin-top: 45px;
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-
-/* You can see I tried to do something here, but I couldnt do it so i gave up :( */
-
-/*
-.monaco-editor,
-.monaco-editor .inputarea.ime-input,
-.monaco-editor-background {
-    background-color: transparent !important;
-}
-
-.monaco-editor .margin {
-  background-color: transparent !important;
-}
-*/
-
-
 /* bunch of shit here doesnt even work but since idk what even works ima just let it be */
