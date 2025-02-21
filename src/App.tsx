@@ -3,182 +3,51 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import * as Monaco from "monaco-editor";
 import "./App.css";
 import "./output.css";
-import "./input.css"; // Maybe useful
+import "./input.css";
 
 const customTheme = {
   base: "vs-dark",
   inherit: true,
   rules: [
-    {
-      background: "282828",
-      token: ""
-    },
-    {
-      foreground: "928374",
-      fontStyle: "italic",
-      token: "comment"
-    },
-    {
-      foreground: "83a598",
-      fontStyle: "bold",
-      token: "keyword"
-    },
-    {
-      foreground: "83a598",
-      fontStyle: "bold",
-      token: "storage"
-    },
-    {
-      foreground: "d79921",
-      token: "constant.numeric"
-    },
-    {
-      foreground: "fb4934",
-      fontStyle: "bold",
-      token: "constant"
-    },
-    {
-      foreground: "b16286",
-      fontStyle: "bold",
-      token: "constant.language"
-    },
-    {
-      foreground: "8ec07c",
-      token: "variable.language"
-    },
-    {
-      foreground: "8ec07c",
-      token: "variable.other"
-    },
-    {
-      foreground: "b8bb26",
-      token: "string"
-    },
-    {
-      foreground: "d79921",
-      token: "constant.character.escape"
-    },
-    {
-      foreground: "d79921",
-      token: "string source"
-    },
-    {
-      foreground: "8ec07c",
-      token: "meta.preprocessor"
-    },
-    {
-      foreground: "d65d0e",
-      fontStyle: "bold",
-      token: "keyword.control.import"
-    },
-    {
-      foreground: "fe8019",
-      fontStyle: "bold",
-      token: "entity.name.function"
-    },
-    {
-      foreground: "fe8019",
-      fontStyle: "bold",
-      token: "keyword.other.name-of-parameter.objc"
-    },
-    {
-      fontStyle: "underline",
-      token: "entity.name.type"
-    },
-    {
-      fontStyle: "italic",
-      token: "entity.other.inherited-class"
-    },
-    {
-      fontStyle: "italic",
-      token: "variable.parameter"
-    },
-    {
-      foreground: "b8bb26",
-      token: "storage.type.method"
-    },
-    {
-      fontStyle: "italic",
-      token: "meta.section entity.name.section"
-    },
-    {
-      fontStyle: "italic",
-      token: "declaration.section entity.name.section"
-    },
-    {
-      foreground: "8ec07c",
-      fontStyle: "bold",
-      token: "support.function"
-    },
-    {
-      foreground: "b16286",
-      fontStyle: "bold",
-      token: "support.class"
-    },
-    {
-      foreground: "b16286",
-      fontStyle: "bold",
-      token: "support.type"
-    },
-    {
-      foreground: "d79921",
-      fontStyle: "bold",
-      token: "support.constant"
-    },
-    {
-      foreground: "83a598",
-      fontStyle: "bold",
-      token: "support.variable"
-    },
-    {
-      foreground: "fb4934",
-      token: "keyword.operator.js"
-    },
-    {
-      foreground: "ffffff",
-      background: "9d0006",
-      token: "invalid"
-    },
-    {
-      background: "7c6f64",
-      token: "invalid.deprecated.trailing-whitespace"
-    },
-    {
-      background: "3c3836",
-      token: "text source"
-    },
-    {
-      background: "3c3836",
-      token: "string.unquoted"
-    },
-    {
-      foreground: "928374",
-      token: "meta.tag.preprocessor.xml"
-    },
-    {
-      foreground: "928374",
-      token: "meta.tag.sgml.doctype"
-    },
-    {
-      fontStyle: "italic",
-      token: "string.quoted.docinfo.doctype.DTD"
-    },
-    {
-      foreground: "83a598",
-      token: "meta.tag"
-    },
-    {
-      foreground: "83a598",
-      token: "declaration.tag"
-    },
-    {
-      fontStyle: "bold",
-      token: "entity.name.tag"
-    },
-    {
-      fontStyle: "italic",
-      token: "entity.other.attribute-name"
-    }
+    { background: "282828", token: "" },
+    { foreground: "928374", fontStyle: "italic", token: "comment" },
+    { foreground: "83a598", fontStyle: "bold", token: "keyword" },
+    { foreground: "83a598", fontStyle: "bold", token: "storage" },
+    { foreground: "d79921", token: "constant.numeric" },
+    { foreground: "fb4934", fontStyle: "bold", token: "constant" },
+    { foreground: "b16286", fontStyle: "bold", token: "constant.language" },
+    { foreground: "8ec07c", token: "variable.language" },
+    { foreground: "8ec07c", token: "variable.other" },
+    { foreground: "b8bb26", token: "string" },
+    { foreground: "d79921", token: "constant.character.escape" },
+    { foreground: "d79921", token: "string source" },
+    { foreground: "8ec07c", token: "meta.preprocessor" },
+    { foreground: "d65d0e", fontStyle: "bold", token: "keyword.control.import" },
+    { foreground: "fe8019", fontStyle: "bold", token: "entity.name.function" },
+    { foreground: "fe8019", fontStyle: "bold", token: "keyword.other.name-of-parameter.objc" },
+    { fontStyle: "underline", token: "entity.name.type" },
+    { fontStyle: "italic", token: "entity.other.inherited-class" },
+    { fontStyle: "italic", token: "variable.parameter" },
+    { foreground: "b8bb26", token: "storage.type.method" },
+    { fontStyle: "italic", token: "meta.section entity.name.section" },
+    { fontStyle: "italic", token: "declaration.section entity.name.section" },
+    { foreground: "8ec07c", fontStyle: "bold", token: "support.function" },
+    { foreground: "b16286", fontStyle: "bold", token: "support.class" },
+    { foreground: "b16286", fontStyle: "bold", token: "support.type" },
+    { foreground: "d79921", fontStyle: "bold", token: "support.constant" },
+    { foreground: "83a598", fontStyle: "bold", token: "support.variable" },
+    { foreground: "fb4934", token: "keyword.operator.js" },
+    { foreground: "ffffff", background: "9d0006", token: "invalid" },
+    { background: "7c6f64", token: "invalid.deprecated.trailing-whitespace" },
+    { background: "3c3836", token: "text source" },
+    { background: "3c3836", token: "string.unquoted" },
+    { foreground: "928374", token: "meta.tag.preprocessor.xml" },
+    { foreground: "928374", token: "meta.tag.sgml.doctype" },
+    { fontStyle: "italic", token: "string.quoted.docinfo.doctype.DTD" },
+    { foreground: "83a598", token: "meta.tag" },
+    { foreground: "83a598", token: "declaration.tag" },
+    { fontStyle: "bold", token: "entity.name.tag" },
+    { fontStyle: "italic", token: "entity.other.attribute-name" }
   ],
   colors: {
     "editor.foreground": "#c8c8c8",
@@ -196,29 +65,27 @@ function App() {
   let editorInstance: Monaco.editor.IStandaloneCodeEditor | null = null;
   const [menuExpanded, setMenuExpanded] = createSignal(false);
 
-  onMount(async () => {
+  const setupTitlebarButtons = async () => {
     const appWindow = await getCurrentWindow();
+    const buttons = [
+      { id: 'titlebar-minimize', action: () => appWindow.minimize() },
+      { id: 'titlebar-maximize', action: () => appWindow.toggleMaximize() },
+      { id: 'titlebar-close', action: () => appWindow.close() }
+    ];
 
-    // Titlebar buttons
-    const minimizeButton = document.getElementById('titlebar-minimize');
-    const maximizeButton = document.getElementById('titlebar-maximize');
-    const closeButton = document.getElementById('titlebar-close');
+    buttons.forEach(({ id, action }) => {
+      const button = document.getElementById(id);
+      if (button) button.addEventListener('click', action);
+    });
+  };
 
-    if (minimizeButton) {
-      minimizeButton.addEventListener('click', () => appWindow.minimize());
-    }
-    if (maximizeButton) {
-      maximizeButton.addEventListener('click', () => appWindow.toggleMaximize());
-    }
-    if (closeButton) {
-      closeButton.addEventListener('click', () => appWindow.close());
-    }
+  onMount(async () => {
+    await setupTitlebarButtons();
 
-    // Monaco editor setup
     Monaco.editor.defineTheme("customTheme", customTheme);
 
     if (editorContainer) {
-      Monaco.editor.setTheme("customTheme"); // I made sure this works by giving it no use lmao
+      Monaco.editor.setTheme("customTheme");
       editorInstance = Monaco.editor.create(editorContainer, {
         value: `-- hello!`,
         language: "lua",
@@ -267,7 +134,6 @@ function App() {
             stroke-linecap="round"
             stroke-linejoin="round"
             class="lucide lucide-minus pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100"
-            id="titlebar-min"
           >
             <path d="M5 12h14" />
           </svg>
@@ -284,7 +150,6 @@ function App() {
             stroke-linecap="round"
             stroke-linejoin="round"
             class="lucide lucide-maximize-2 pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100"
-            id="titlebar-max"
           >
             <polyline points="15 3 21 3 21 9" />
             <polyline points="9 21 3 21 3 15" />
@@ -304,7 +169,6 @@ function App() {
             stroke-linecap="round"
             stroke-linejoin="round"
             class="lucide lucide-x pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100"
-            id="titlebar-close"
           >
             <path d="M18 6 6 18" />
             <path d="m6 6 12 12" />
@@ -342,81 +206,32 @@ function App() {
           </div>
           {menuExpanded() && (
             <ul class="flex flex-col h-full">
-              <li class="p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t border-white/40">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-folder-open mr-1 select-none cursor-pointer"
+              {[
+                { icon: "folder-open", label: "Open file" },
+                { icon: "save", label: "Save file" },
+                { icon: "eye", label: "iSpy" },
+                { icon: "settings-2", label: "Settings", extraClass: "mt-56" },
+              ].map(({ icon, label, extraClass = "" }) => (
+                <li
+                  class={`p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t border-white/40 ${extraClass}`}
                 >
-                  <path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2" />
-                </svg>
-                <div class="select-none cursor-pointer ml-2">Open file</div>
-              </li>
-              <li class="p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t border-b border-white/40">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-save mr-1 select-none cursor-pointer"
-                >
-                  <path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
-                  <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
-                  <path d="M7 3v4a1 1 0 0 0 1 1h7" />
-                </svg>
-                <div class="select-none cursor-pointer ml-2">Save file</div>
-              </li>
-              <li class="p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-b border-white/40">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-eye mr-1 select-none cursor-pointer"
-                >
-                  <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-                <div class="select-none cursor-pointer ml-2">iSpy</div>
-              </li>
-              <li class=""></li>
-              <li class="p-2 mt-56 transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t border-white/40 cursor-pointer">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-settings-2 mr-1 select-none"
-                >
-                  <path d="M20 7h-9" />
-                  <path d="M14 17H5" />
-                  <circle cx="17" cy="17" r="3" />
-                  <circle cx="7" cy="7" r="3" />
-                </svg>
-                <div class="select-none cursor-pointer ml-2 font-montserrat">Settings</div>
-              </li>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class={`lucide lucide-${icon} mr-1 select-none cursor-pointer`}
+                  >
+                    <path d="M6 14l1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2" />
+                  </svg>
+                  <div class="select-none cursor-pointer ml-2">{label}</div>
+                </li>
+              ))}
             </ul>
           )}
         </div>
@@ -433,15 +248,17 @@ function App() {
             menuExpanded() ? "w-[calc(89%-5rem)]" : "w-[calc(98%-3rem)]"
           }`}
         >
-          <div class="attach-button rounded-lg pb-2 pt-2 pl-3 pr-3 select-none cursor-pointer border-2 border-white/50 hover:border-red-400 transition-all delay-50 active:scale-95 font-montserrat">
-            Attach
-          </div>
-          <div class="execute-button rounded-lg mr-1 ml-auto pb-2 pt-2 pl-3 pr-3 select-none cursor-pointer border-2 border-white/50 hover:border-red-400 transition-all delay-50 active:scale-95">
-            Clear
-          </div>
-          <div class="execute-button rounded-lg pb-2 pt-2 pl-3 pr-3 select-none cursor-pointer border-2 border-white/50 hover:border-green-400 transition-all delay-50 active:scale-95">
-            Execute
-          </div>
+          {[
+            { label: "Attach", extraClass: "border-red-400" },
+            { label: "Clear", extraClass: "border-red-400 ml-auto" },
+            { label: "Execute", extraClass: "border-green-400" },
+          ].map(({ label, extraClass }) => (
+            <div
+              class={`rounded-lg pb-2 pt-2 pl-3 pr-3 select-none cursor-pointer border-2 border-white/50 hover:${extraClass} transition-all delay-50 active:scale-95 font-montserrat`}
+            >
+              {label}
+            </div>
+          ))}
         </div>
       </div>
     </main>
