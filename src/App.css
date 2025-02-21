@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "@fontsource/montserrat/index.css";
 
+/* Font Faces */
 @font-face {
   font-family: '0xProto';
   src: url('./fonts/0xProto-Regular.woff2') format('woff2'),
@@ -12,19 +13,15 @@
 
 @font-face {
   font-family: 'Montserrat';
-
   src: url('./fonts/Montserrat-Regular.ttf');
 }
 
+/* Theme Variables */
 @theme {
   --font-montserrat: Montserrat, sans-serif;
 }
 
-#root, main {
-  overflow: hidden;
-  border-radius: 10px;
-}
-
+/* Root Styles */
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
@@ -39,6 +36,15 @@
   -webkit-text-size-adjust: 100%;
 }
 
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #f6f6f6;
+    background-color: #2f2f2f;
+  }
+}
+
+/* HTML and Body */
 html {
   height: 100% !important;
   margin: 0;
@@ -50,7 +56,7 @@ html {
   border-top-left-radius: 10px;
 }
 
-
+/* Main Container */
 main {
   margin: 0 !important;
   width: 100%;
@@ -65,14 +71,7 @@ main {
   border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
-  }
-}
-
+/* Title Bar */
 .title-bar {
   height: 30px !important;
   width: 100%;
@@ -92,6 +91,7 @@ main {
   border-top-right-radius: 10px;
 }
 
+/* Main Content */
 .main-content {
   padding-top: 0px;
   flex-grow: 1;
@@ -102,6 +102,7 @@ main {
   border-radius: 10px;
 }
 
+/* Editor Container */
 .editor-container {
   height: 350px;
   margin: auto;
@@ -118,6 +119,7 @@ main {
   left: 0;
 }
 
+/* Button Bar */
 .button-bar {
   display: flex;
   border-radius: 12px;
@@ -127,4 +129,8 @@ main {
   margin-bottom: 15px;
 }
 
-/* bunch of shit here doesnt even work but since idk what even works ima just let it be */
+/* Root and Main Overflow */
+#root, main {
+  overflow: hidden;
+  border-radius: 10px;
+}

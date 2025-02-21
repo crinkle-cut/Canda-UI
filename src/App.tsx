@@ -197,9 +197,9 @@ function App() {
   const [menuExpanded, setMenuExpanded] = createSignal(false);
 
   onMount(async () => {
-
     const appWindow = await getCurrentWindow();
 
+    // Titlebar buttons
     const minimizeButton = document.getElementById('titlebar-minimize');
     const maximizeButton = document.getElementById('titlebar-maximize');
     const closeButton = document.getElementById('titlebar-close');
@@ -214,6 +214,7 @@ function App() {
       closeButton.addEventListener('click', () => appWindow.close());
     }
 
+    // Monaco editor setup
     Monaco.editor.defineTheme("customTheme", customTheme);
 
     if (editorContainer) {
@@ -246,6 +247,7 @@ function App() {
 
   return (
     <main class="flex flex-col w-full h-full min-h-screen select-none" id="main">
+      {/* Title bar */}
       <div
         class="title-bar w-full text-white text-sm font-medium flex items-center justify-center select-none border-b border-white/10 z-30"
         style={{ "-webkit-app-region": "drag" }}
@@ -254,62 +256,64 @@ function App() {
         <p class="z-40 text-white cursor-default text-md pl-2 font-montserrat">Canda</p>
         <div class="flex-grow"></div>
         <div class="pr-2 z-40" id="titlebar-minimize">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#ffffff"
-          stroke-width="1.2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-minus pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100"
-          id="titlebar-min"
-        >
-          <path d="M5 12h14" />
-        </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#ffffff"
+            stroke-width="1.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-minus pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100"
+            id="titlebar-min"
+          >
+            <path d="M5 12h14" />
+          </svg>
         </div>
         <div id="titlebar-maximize">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#ffffff"
-          stroke-width="1.2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-maximize-2 pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100"
-          id="titlebar-max"
-        >
-          <polyline points="15 3 21 3 21 9" />
-          <polyline points="9 21 3 21 3 15" />
-          <line x1="21" x2="14" y1="3" y2="10" />
-          <line x1="3" x2="10" y1="21" y2="14" />
-        </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#ffffff"
+            stroke-width="1.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-maximize-2 pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100"
+            id="titlebar-max"
+          >
+            <polyline points="15 3 21 3 21 9" />
+            <polyline points="9 21 3 21 3 15" />
+            <line x1="21" x2="14" y1="3" y2="10" />
+            <line x1="3" x2="10" y1="21" y2="14" />
+          </svg>
         </div>
         <div id="titlebar-close">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#ffffff"
-          stroke-width="1.2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-x pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100"
-          id="titlebar-close"
-        >
-          <path d="M18 6 6 18" />
-          <path d="m6 6 12 12" />
-        </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#ffffff"
+            stroke-width="1.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-x pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100"
+            id="titlebar-close"
+          >
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
         </div>
       </div>
+      {/* Main content */}
       <div class="main-content flex h-full relative select-none">
+        {/* Side menu */}
         <div
           class={`side-menu h-[435px] bg-black/40 border-r-2 border-t-2 border-b-2 border-t-white/40 border-b-white/40 border-r-white/40 rounded-r-xl transition-all duration-300 top-[45px] absolute left-0 overflow-hidden hover:border-r-white/80 hover:border-b-white/80 hover:border-t-white/80 ${
             menuExpanded() ? "max-w-[16.66%] w-full max-h-[435px]" : "max-w-[28px] w-full"
@@ -338,7 +342,7 @@ function App() {
           </div>
           {menuExpanded() && (
             <ul class="flex flex-col h-full">
-              <li class="p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t-1 border-white/40">
+              <li class="p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t border-white/40">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
@@ -355,7 +359,7 @@ function App() {
                 </svg>
                 <div class="select-none cursor-pointer ml-2">Open file</div>
               </li>
-              <li class="p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t-1 border-b-1 border-white/40">
+              <li class="p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t border-b border-white/40">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
@@ -374,7 +378,7 @@ function App() {
                 </svg>
                 <div class="select-none cursor-pointer ml-2">Save file</div>
               </li>
-              <li class="p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-b-1 border-white/40">
+              <li class="p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-b border-white/40">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
@@ -393,7 +397,7 @@ function App() {
                 <div class="select-none cursor-pointer ml-2">iSpy</div>
               </li>
               <li class=""></li>
-              <li class="p-2 mt-56 transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t-1 border-white/40 cursor-pointer">
+              <li class="p-2 mt-56 transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t border-white/40 cursor-pointer">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
@@ -416,12 +420,14 @@ function App() {
             </ul>
           )}
         </div>
+        {/* Editor container */}
         <div
           ref={(el) => (editorContainer = el)}
           class={`editor-container select-none flex-grow transition-all duration-300 transform-gpu border-2 border-white/40 hover:border-white/80 ${
             menuExpanded() ? "w-[calc(89%-5rem)]" : "w-[calc(98%-3rem)]"
           }`}
         ></div>
+        {/* Button bar */}
         <div
           class={`button-bar flex relative transition-all duration-300 transform-gpu ${
             menuExpanded() ? "w-[calc(89%-5rem)]" : "w-[calc(98%-3rem)]"
