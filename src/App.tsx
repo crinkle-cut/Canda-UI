@@ -1,9 +1,11 @@
-import { createSignal, onMount, onCleanup } from "solid-js";
+import { createSignal, onMount, onCleanup, createEffect } from "solid-js";
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import * as Monaco from "monaco-editor";
 import "./App.css";
 import "./output.css";
 import "./input.css";
+
+const [editorInstance, setEditorInstance] = createSignal<Monaco.editor.IStandaloneCodeEditor | null>(null);
 
 const customTheme = {
   base: "vs-dark",
@@ -62,8 +64,13 @@ const customTheme = {
 
 function App() {
   let editorContainer: HTMLDivElement | null = null;
-  let editorInstance: Monaco.editor.IStandaloneCodeEditor | null = null;
   const [menuExpanded, setMenuExpanded] = createSignal(false);
+
+  const [activeTab, setActiveTab] = createSignal(0);
+
+  const [tabs, setTabs] = createSignal<{ content: string }[]>([
+    { content: "-- hello!" },
+  ]);
 
   const setupTitlebarButtons = async () => {
     const appWindow = await getCurrentWindow();
@@ -79,6 +86,13 @@ function App() {
     });
   };
 
+  createEffect(() => {
+    const instance = editorInstance();
+    if (instance) {
+      instance.setValue(tabs()[activeTab()].content);
+    }
+  });
+
   onMount(async () => {
     await setupTitlebarButtons();
 
@@ -86,32 +100,31 @@ function App() {
 
     if (editorContainer) {
       Monaco.editor.setTheme("customTheme");
-      editorInstance = Monaco.editor.create(editorContainer, {
-        value: `-- hello!`,
+      const instance = Monaco.editor.create(editorContainer, {
+        value: tabs()[activeTab()].content,
         language: "lua",
         fontFamily: "'0xProto'",
         fontSize: 14,
         automaticLayout: true,
         cursorSmoothCaretAnimation: "on",
       });
+  
+      setEditorInstance(instance);
 
       const resizeObserver = new ResizeObserver(() => {
-        editorInstance?.layout();
+        instance.layout();
       });
       resizeObserver.observe(editorContainer);
 
+
       onCleanup(() => {
-        resizeObserver.disconnect();
+          resizeObserver.disconnect();
+          instance.dispose();
       });
+
     }
   });
-
-  onCleanup(() => {
-    if (editorInstance) {
-      editorInstance.dispose();
-    }
-  });
-
+  
   return (
     <main class="flex flex-col w-full h-full min-h-screen select-none inset-shadow-sm" id="main">
       {/* Title bar */}
@@ -247,10 +260,29 @@ function App() {
           {label}
               </div>
               {index === 0 && (
-          <div
-            class="rounded-lg pb-2 pt-2 pl-3 pr-3 ml-2 mr-2 select-none bg-linear-to-t from-white/0 to-black/40 inset-shadow-sm border-2 border-white/50 transition-all duration-100"
-            style={{ width: "calc(90% - 4rem)" }}
-          ></div>
+            <div
+              class="rounded-lg pb-1 pt-1 pl-3 pr-3 ml-2 mr-2 select-none bg-linear-to-t from-white/0 to-black/40 inset-shadow-sm border-2 border-white/50 transition-all duration-100"
+              style={{ width: "calc(90% - 4rem)" }}
+            >
+              <div class="tabs flex space-x-2 items-center h-full">
+                {tabs().map((tab, index) => (
+                  <div
+                    class={`tab cursor-pointer pl-2 pr-2 flex-grow text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md ${
+                      activeTab() === index ? "border-white bg-white/10" : ""
+                    }`}
+                    onClick={() => setActiveTab(index)}
+                  >
+                    Tab {index + 1}
+                  </div>
+                ))}
+                <div
+                  class="add-tab cursor-pointer pl-2 pr-2 flex-grow-0 text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md"
+                  onClick={() => setTabs([...tabs(), { content: `-- hello!` }])}
+                >
+                  +
+                </div>
+              </div>
+            </div>
               )}
             </>
           ))}
