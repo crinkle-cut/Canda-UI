@@ -113,7 +113,7 @@ function App() {
   });
 
   return (
-    <main class="flex flex-col w-full h-full min-h-screen select-none" id="main">
+    <main class="flex flex-col w-full h-full min-h-screen select-none inset-shadow-sm" id="main">
       {/* Title bar */}
       <div
         class="title-bar w-full text-white text-sm font-medium flex items-center justify-center select-none border-b border-white/10 z-30"
@@ -181,7 +181,7 @@ function App() {
         <div
           class={`side-menu h-[435px] bg-black/40 border-r-2 border-t-2 border-b-2 border-t-white/40 border-b-white/40 border-r-white/40 rounded-r-xl transition-all duration-300 top-[45px] absolute left-0 overflow-hidden hover:border-r-white/80 hover:border-b-white/80 hover:border-t-white/80 ${
             menuExpanded() ? "max-w-[16.66%] w-full max-h-[435px]" : "max-w-[28px] w-full"
-          } flex-shrink-0`}
+          } flex-shrink-0 whitespace-nowrap`}
         >
           <div
             class="pt-2 pb-2 cursor-pointer hover:border-white/80 rounded-xl transform-gpu"
@@ -198,42 +198,27 @@ function App() {
               stroke-linecap="round"
               stroke-linejoin="round"
               class={`lucide lucide-chevron-right transition-all duration-300 transform-gpu hover:scale-110 ${
-                menuExpanded() ? "rotate-180 translate-x-25" : ""
+          menuExpanded() ? "rotate-180 translate-x-25" : ""
               }`}
             >
               <path d="m9 18 6-6-6-6" />
             </svg>
           </div>
-          {menuExpanded() && (
-            <ul class="flex flex-col h-full">
-              {[
-                { icon: "folder-open", label: "Open file" },
-                { icon: "save", label: "Save file" },
-                { icon: "eye", label: "iSpy" },
-                { icon: "settings-2", label: "Settings", extraClass: "mt-56" },
-              ].map(({ icon, label, extraClass = "" }) => (
-                <li
-                  class={`p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t border-white/40 ${extraClass}`}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class={`lucide lucide-${icon} mr-1 select-none cursor-pointer`}
-                  >
-                    <path d="M6 14l1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2" />
-                  </svg>
-                  <div class="select-none cursor-pointer ml-2">{label}</div>
-                </li>
-              ))}
+            <ul class={`flex flex-col h-full transition-opacity duration-200 ${menuExpanded() ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+            {[
+              { label: "Open file" },
+              { label: "Save file" },
+              { label: "iSpy", extraClass: "" },
+              { label: "Workspace", extraClass: "border-b" },
+              { label: "Settings", extraClass: "mt-46" },
+            ].map(({ label, extraClass = "" }) => (
+              <li
+              class={`p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t border-white/40 ${extraClass}`}
+              >
+              <div class="select-none cursor-pointer ml-2">{label}</div>
+              </li>
+            ))}
             </ul>
-          )}
         </div>
         {/* Editor container */}
         <div
@@ -249,15 +234,25 @@ function App() {
           }`}
         >
           {[
-            { label: "Attach", extraClass: "border-red-400" },
-            { label: "Clear", extraClass: "border-red-400 ml-auto" },
-            { label: "Execute", extraClass: "border-green-400" },
-          ].map(({ label, extraClass }) => (
-            <div
-              class={`rounded-lg pb-2 pt-2 pl-3 pr-3 select-none cursor-pointer border-2 border-white/50 hover:${extraClass} transition-all delay-50 active:scale-95 font-montserrat`}
-            >
-              {label}
-            </div>
+            { label: "Attach", extraClass: "border-2 hover:border-red-400 duration-200 transition-all" },
+            { label: "Clear", extraClass: "border-2 hover:border-red-400 duration-200 transition-all" },
+            { label: "Execute", extraClass: " border-2 hover:border-green-400 duration-200 transition-all" },
+          ].map(({ label, extraClass }, index) => (
+            <>
+              <div
+          class={`rounded-lg pb-2 pt-2 pl-3 pr-3 select-none bg-linear-to-t from-white/0 to-black/40 inset-shadow-sm cursor-pointer border-2 border-white/50 hover:${extraClass} transition-all delay-50 active:scale-95 font-montserrat ${
+            index === 1 ? "ml-auto mr-2" : ""
+          }`}
+              >
+          {label}
+              </div>
+              {index === 0 && (
+          <div
+            class="rounded-lg pb-2 pt-2 pl-3 pr-3 ml-2 mr-2 select-none bg-linear-to-t from-white/0 to-black/40 inset-shadow-sm border-2 border-white/50 transition-all duration-100"
+            style={{ width: "calc(90% - 4rem)" }}
+          ></div>
+              )}
+            </>
           ))}
         </div>
       </div>

@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
 import monacoEditorPluginModule from 'vite-plugin-monaco-editor'
 import tailwindcss from '@tailwindcss/vite'
+import obfuscatorPlugin from "vite-plugin-javascript-obfuscator";
 
 const isObjectWithDefaultFunction = (module: unknown): module is { default: typeof monacoEditorPluginModule } => (
   module != null &&
@@ -23,6 +24,16 @@ export default defineConfig(async () => ({
     solid(),
     monacoEditorPlugin({}),
     tailwindcss(),
+    ...(process.env.NODE_ENV === 'production' ? [
+      obfuscatorPlugin({
+        options: {
+          stringArrayEncoding: ['base64', 'rc4'], // mfs will have fun with this 💔😭
+          compact: true,
+          controlFlowFlattening: true, // just for the love of the game ✌️😭
+          debugProtection: true,
+        },
+      }),
+    ] : []),
   ],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`

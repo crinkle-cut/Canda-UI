@@ -4,6 +4,8 @@ version = "0.1.0"
 description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
+build = "build.rs"
+strip = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -26,5 +28,10 @@ window-vibrancy = { git = "https://github.com/tauri-apps/window-vibrancy" }
 raw-window-handle = "0.6.2"
 tauri-plugin-decorum = "1.1.1"
 window-shadows = { git = "https://github.com/tauri-apps/window-shadows" }
+aes = "0.7"
+rand = "0.8"
+base64 = "0.13"
+libc = "0.2"
+obfstr = "0.2"
 
 # just dont change anything here idek why and how this works
