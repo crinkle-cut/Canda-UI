@@ -65,9 +65,7 @@ const customTheme = {
 function App() {
   let editorContainer: HTMLDivElement | null = null;
   const [menuExpanded, setMenuExpanded] = createSignal(false);
-
   const [activeTab, setActiveTab] = createSignal(0);
-
   const [tabs, setTabs] = createSignal<{ content: string }[]>([
     { content: "-- hello!" },
   ]);
@@ -108,7 +106,7 @@ function App() {
         automaticLayout: true,
         cursorSmoothCaretAnimation: "on",
       });
-  
+
       setEditorInstance(instance);
 
       const resizeObserver = new ResizeObserver(() => {
@@ -116,15 +114,13 @@ function App() {
       });
       resizeObserver.observe(editorContainer);
 
-
       onCleanup(() => {
-          resizeObserver.disconnect();
-          instance.dispose();
+        resizeObserver.disconnect();
+        instance.dispose();
       });
-
     }
   });
-  
+
   return (
     <main class="flex flex-col w-full h-full min-h-screen select-none inset-shadow-sm" id="main">
       {/* Title bar */}
@@ -211,13 +207,13 @@ function App() {
               stroke-linecap="round"
               stroke-linejoin="round"
               class={`lucide lucide-chevron-right transition-all duration-300 transform-gpu hover:scale-110 ${
-          menuExpanded() ? "rotate-180 translate-x-25" : ""
+                menuExpanded() ? "rotate-180 translate-x-25" : ""
               }`}
             >
               <path d="m9 18 6-6-6-6" />
             </svg>
           </div>
-            <ul class={`flex flex-col h-full transition-opacity duration-200 ${menuExpanded() ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+          <ul class={`flex flex-col h-full transition-opacity duration-200 ${menuExpanded() ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
             {[
               { label: "Open file" },
               { label: "Save file" },
@@ -226,12 +222,12 @@ function App() {
               { label: "Settings", extraClass: "mt-46" },
             ].map(({ label, extraClass = "" }) => (
               <li
-              class={`p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t border-white/40 ${extraClass}`}
+                class={`p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t border-white/40 ${extraClass}`}
               >
-              <div class="select-none cursor-pointer ml-2">{label}</div>
+                <div class="select-none cursor-pointer ml-2">{label}</div>
               </li>
             ))}
-            </ul>
+          </ul>
         </div>
         {/* Editor container */}
         <div
@@ -246,46 +242,65 @@ function App() {
             menuExpanded() ? "w-[calc(89%-5rem)]" : "w-[calc(98%-3rem)]"
           }`}
         >
-          {[
-            { label: "Attach", extraClass: "border-2 hover:border-red-400 duration-200 transition-all" },
-            { label: "Clear", extraClass: "border-2 hover:border-red-400 duration-200 transition-all" },
-            { label: "Execute", extraClass: " border-2 hover:border-green-400 duration-200 transition-all" },
-          ].map(({ label, extraClass }, index) => (
-            <>
-              <div
-          class={`rounded-lg pb-2 pt-2 pl-3 pr-3 select-none bg-linear-to-t from-white/0 to-black/40 inset-shadow-sm cursor-pointer border-2 border-white/50 hover:${extraClass} transition-all delay-50 active:scale-95 font-montserrat ${
-            index === 1 ? "ml-auto mr-2" : ""
-          }`}
-              >
-          {label}
-              </div>
-              {index === 0 && (
-            <div
-              class="rounded-lg pb-1 pt-1 pl-3 pr-3 ml-2 mr-2 select-none bg-linear-to-t from-white/0 to-black/40 inset-shadow-sm border-2 border-white/50 transition-all duration-100"
-              style={{ width: "calc(90% - 4rem)" }}
-            >
-              <div class="tabs flex space-x-2 items-center h-full">
-                {tabs().map((tab, index) => (
-                  <div
-                    class={`tab cursor-pointer pl-2 pr-2 flex-grow text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md ${
-                      activeTab() === index ? "border-white bg-white/10" : ""
-                    }`}
-                    onClick={() => setActiveTab(index)}
-                  >
-                    Tab {index + 1}
-                  </div>
-                ))}
+          <div
+            class="rounded-lg pb-1 pt-1 pl-3 pr-3 select-none bg-linear-to-t from-white/0 to-black/40 inset-shadow-sm border-2 border-white/50 transition-all duration-100 w-full"
+          >
+            <div class="tabs flex space-x-2 items-center h-full">
+              {tabs().map((tab, index) => (
                 <div
-                  class="add-tab cursor-pointer pl-2 pr-2 flex-grow-0 text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md"
-                  onClick={() => setTabs([...tabs(), { content: `-- hello!` }])}
+                  class={`tab cursor-pointer pl-2 pr-2 flex-grow text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md ${
+                    activeTab() === index ? "border-white/95" : ""
+                  }`}
+                  onClick={() => setActiveTab(index)}
                 >
-                  +
+                  Tab {index + 1}
                 </div>
+              ))}
+              <div
+                class="add-tab cursor-pointer pl-2 pr-2 flex-grow-0 text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md"
+                onClick={() => setTabs([...tabs(), { content: `-- hello!` }])}
+              >
+                +
               </div>
             </div>
-              )}
-            </>
-          ))}
+          </div>
+          {/* New Button Bar */}
+          <div class="flex ml-[15px] border-2 border-white/50 rounded-lg">
+            {[
+              {
+                icon: (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-unplug">
+                    <path d="m19 5 3-3"/><path d="m2 22 3-3"/><path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"/>
+                    <path d="M7.5 13.5 10 11"/><path d="M10.5 16.5 13 14"/><path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"/>
+                  </svg>
+                ),
+                extraClass: "duration-200 transition-all"
+              },
+              {
+                icon: (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-delete">
+                    <path d="M10 5a2 2 0 0 0-1.344.519l-6.328 5.74a1 1 0 0 0 0 1.481l6.328 5.741A2 2 0 0 0 10 19h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"/>
+                    <path d="m12 9 6 6"/><path d="m18 9-6 6"/>
+                  </svg>
+                ),
+                extraClass: "duration-200 transition-all ml-1"
+              },
+              {
+                icon: (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-play">
+                    <polygon points="6 3 20 12 6 21 6 3"/>
+                  </svg>
+                ),
+                extraClass: "duration-200 transition-all ml-1"
+              }
+            ].map(({ icon, extraClass }) => (
+              <div
+                class={`rounded-lg p-2 select-none cursor-pointer hover:${extraClass} hover:scale-110 active:scale-90 delay-75 transition-all font-montserrat flex items-center justify-center`}
+              >
+                {icon}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </main>
