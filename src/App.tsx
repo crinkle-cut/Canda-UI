@@ -99,7 +99,7 @@ function App() {
     if (editorContainer) {
       Monaco.editor.setTheme("customTheme");
       const instance = Monaco.editor.create(editorContainer, {
-        value: tabs()[activeTab()].content,
+        value: tabs()[activeTab()].content, /* aint no way my ass coded this shit 💀💔 */
         language: "lua",
         fontFamily: "'0xProto'",
         fontSize: 14,
@@ -246,7 +246,7 @@ function App() {
             class="rounded-lg pb-1 pt-1 pl-3 pr-3 select-none bg-linear-to-t from-white/0 to-black/40 inset-shadow-sm border-2 border-white/50 transition-all duration-100 w-full"
           >
             <div class="tabs flex space-x-2 items-center h-full">
-              {tabs().map((tab, index) => (
+              {tabs().map((_, index) => (
                 <div
                   class={`tab cursor-pointer pl-2 pr-2 flex-grow text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md ${
                     activeTab() === index ? "border-white/95" : ""
