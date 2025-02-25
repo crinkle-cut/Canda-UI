@@ -134,3 +134,41 @@ main {
   overflow: hidden;
   border-radius: 10px;
 }
+
+/* ----------------------------------------- */
+
+/* Tab Animations */
+
+.tab-closing {
+  animation: closeTabAnimation 0.3s ease-out forwards;
+}
+
+@keyframes closeTabAnimation {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+.tab-opening {
+  animation: openTabAnimation 0.3s ease-out forwards;
+}
+
+@keyframes openTabAnimation {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.tab {
+  transition: width 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+}

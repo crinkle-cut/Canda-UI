@@ -66,10 +66,11 @@ function App() {
   let editorContainer: HTMLDivElement | null = null;
   const [menuExpanded, setMenuExpanded] = createSignal(false);
   const [activeTab, setActiveTab] = createSignal(0);
-  const [tabs, setTabs] = createSignal<{ content: string }[]>([
-    { content: "-- hello!" },
+  const [tabs, setTabs] = createSignal<{ content: string, closing: boolean, opening: boolean }[]>([ // Add closing state
+    { content: "-- hello!", closing: false, opening: false },
   ]);
   const [editorContent, setEditorContent] = createSignal("");
+  const [nextTabKey, setNextTabKey] = createSignal(1);
 
   const setupTitlebarButtons = async () => {
     const appWindow = await getCurrentWindow();
@@ -92,6 +93,43 @@ function App() {
     }
   });
 
+  const closeTab = (index: number) => {
+    const currentTabs = tabs();
+  
+    setTabs(
+      currentTabs.map((tab, i) => (i === index ? { ...tab, closing: true } : tab))
+    );
+  
+    setTimeout(() => {
+      const updatedTabs = currentTabs.filter((_, i) => i !== index);
+      setTabs(updatedTabs);
+  
+      if (activeTab() === index && updatedTabs.length > 0) {
+        setActiveTab(index === 0 ? 0 : index - 1);
+      }
+    }, 300);
+  };
+
+  const addTab = () => {
+    const instance = editorInstance();
+    if (instance) {
+      batch(() => {
+        // save content
+        const updatedTabs = tabs().map((tab, i) =>
+          i === activeTab() ? { ...tab, content: editorContent() } : tab
+        );
+        const newTab = { content: `-- hello!`, closing: false, opening: true, key: nextTabKey() };
+        setTabs([...updatedTabs, newTab]);
+        setNextTabKey(nextTabKey() + 1);
+        setActiveTab(updatedTabs.length); // set active tab to the new tab
+      });
+  
+      setTimeout(() => {
+        setTabs(tabs().map(tab => tab.opening ? { ...tab, opening: false } : tab));
+      }, 300);
+    }
+  };
+
   onMount(async () => {
     await setupTitlebarButtons();
 
@@ -111,7 +149,7 @@ function App() {
       setEditorInstance(instance);
 
       instance.onDidChangeModelContent(() => {
-        setEditorContent(instance.getValue()); // Update editorContent on changes
+        setEditorContent(instance.getValue()); // update editorContent on changes
       });
 
       const resizeObserver = new ResizeObserver(() => {
@@ -129,15 +167,15 @@ function App() {
   const handleTabClick = (index: number) => {
     const instance = editorInstance();
     if (instance) {
-      batch(() => { // use ts shi for multiple state updates
+      batch(() => {
         setTabs(
           tabs().map((tab, i) =>
-            i === activeTab() ? { content: editorContent() } : tab // save editorContent
+            i === activeTab() ? { ...tab, content: editorContent() } : tab
           )
         );
         setActiveTab(index);
-        instance.setValue(tabs()[index].content); // set value *after* activeTab update
-        setEditorContent(tabs()[index].content); // update editorContent :D
+        instance.setValue(tabs()[index].content);
+        setEditorContent(tabs()[index].content);
       });
     }
   };
@@ -267,45 +305,42 @@ function App() {
             class="rounded-lg pb-1 pt-1 pl-3 pr-3 select-none bg-linear-to-t from-white/0 to-black/40 inset-shadow-sm border-2 border-white/50 transition-all duration-100 w-full"
           >
             <div class="tabs flex space-x-2 items-center h-full">
-              {tabs().map((_, index) => (
+            {tabs().map((tab, index) => (
               <div
-                class={`tab relative cursor-pointer pl-2 pr-2 flex-grow text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md ${
+              class={`tab relative cursor-pointer pl-2 pr-2 flex-grow text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md ${
                 activeTab() === index ? "border-white/95" : ""
-                }`}
-                onClick={() => handleTabClick(index)}
+              } ${tab.closing ? 'tab-closing' : ''} ${tab.opening ? 'tab-opening' : ''}`}
+              onClick={() => handleTabClick(index)}
               >
-                Tab {index + 1}
-                <div
+              Tab {index + 1}
+              <div
                 class="close-tab absolute top-0 right-0 mt-1 mr-1 cursor-pointer"
                 onClick={(e) => {
-                  e.stopPropagation();
-                  setTabs(tabs().filter((_, i) => i !== index));
-                  if (activeTab() === index && tabs().length > 1) {
-                  setActiveTab(index === 0 ? 0 : index - 1);
-                  }
+                e.stopPropagation();
+                closeTab(index);
                 }}
-                >
+              >
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#ffffff"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-x"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#ffffff"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-x"
                 >
-                  <path d="M18 6 6 18" />
-                  <path d="m6 6 12 12" />
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
                 </svg>
-                </div>
               </div>
-              ))}
+              </div>
+            ))}
               <div
               class="add-tab cursor-pointer pl-2 pr-2 flex-grow-0 text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md"
-              onClick={() => setTabs([...tabs(), { content: `-- hello!` }])}
+              onClick={addTab}
               >
               +
               </div>
