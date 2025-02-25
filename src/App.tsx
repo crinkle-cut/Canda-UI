@@ -1,4 +1,4 @@
-import { createSignal, onMount, onCleanup, createEffect } from "solid-js";
+import { createSignal, onMount, onCleanup, createEffect, batch } from "solid-js";
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import * as Monaco from "monaco-editor";
 import "./App.css";
@@ -69,6 +69,7 @@ function App() {
   const [tabs, setTabs] = createSignal<{ content: string }[]>([
     { content: "-- hello!" },
   ]);
+  const [editorContent, setEditorContent] = createSignal("");
 
   const setupTitlebarButtons = async () => {
     const appWindow = await getCurrentWindow();
@@ -109,6 +110,10 @@ function App() {
 
       setEditorInstance(instance);
 
+      instance.onDidChangeModelContent(() => {
+        setEditorContent(instance.getValue()); // Update editorContent on changes
+      });
+
       const resizeObserver = new ResizeObserver(() => {
         instance.layout();
       });
@@ -120,6 +125,22 @@ function App() {
       });
     }
   });
+
+  const handleTabClick = (index: number) => {
+    const instance = editorInstance();
+    if (instance) {
+      batch(() => { // use ts shi for multiple state updates
+        setTabs(
+          tabs().map((tab, i) =>
+            i === activeTab() ? { content: editorContent() } : tab // save editorContent
+          )
+        );
+        setActiveTab(index);
+        instance.setValue(tabs()[index].content); // set value *after* activeTab update
+        setEditorContent(tabs()[index].content); // update editorContent :D
+      });
+    }
+  };
 
   return (
     <main class="flex flex-col w-full h-full min-h-screen select-none inset-shadow-sm" id="main">
@@ -247,20 +268,46 @@ function App() {
           >
             <div class="tabs flex space-x-2 items-center h-full">
               {tabs().map((_, index) => (
+              <div
+                class={`tab relative cursor-pointer pl-2 pr-2 flex-grow text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md ${
+                activeTab() === index ? "border-white/95" : ""
+                }`}
+                onClick={() => handleTabClick(index)}
+              >
+                Tab {index + 1}
                 <div
-                  class={`tab cursor-pointer pl-2 pr-2 flex-grow text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md ${
-                    activeTab() === index ? "border-white/95" : ""
-                  }`}
-                  onClick={() => setActiveTab(index)}
+                class="close-tab absolute top-0 right-0 mt-1 mr-1 cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setTabs(tabs().filter((_, i) => i !== index));
+                  if (activeTab() === index && tabs().length > 1) {
+                  setActiveTab(index === 0 ? 0 : index - 1);
+                  }
+                }}
                 >
-                  Tab {index + 1}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#ffffff"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-x"
+                >
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
                 </div>
+              </div>
               ))}
               <div
-                class="add-tab cursor-pointer pl-2 pr-2 flex-grow-0 text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md"
-                onClick={() => setTabs([...tabs(), { content: `-- hello!` }])}
+              class="add-tab cursor-pointer pl-2 pr-2 flex-grow-0 text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md"
+              onClick={() => setTabs([...tabs(), { content: `-- hello!` }])}
               >
-                +
+              +
               </div>
             </div>
           </div>
