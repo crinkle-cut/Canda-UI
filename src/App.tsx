@@ -88,14 +88,16 @@ function App() {
 
   createEffect(() => {
     const instance = editorInstance();
-    if (instance) {
-      instance.setValue(tabs()[activeTab()].content);
+    const currentTabs = tabs();
+    const activeIdx = activeTab();
+  
+    if (instance && currentTabs.length > 0 && activeIdx >= 0 && activeIdx < currentTabs.length) {
+      instance.setValue(currentTabs[activeIdx].content);
     }
   });
 
   const closeTab = (index: number) => {
     const currentTabs = tabs();
-  
     setTabs(
       currentTabs.map((tab, i) => (i === index ? { ...tab, closing: true } : tab))
     );
@@ -104,31 +106,59 @@ function App() {
       const updatedTabs = currentTabs.filter((_, i) => i !== index);
       setTabs(updatedTabs);
   
-      if (activeTab() === index && updatedTabs.length > 0) {
-        setActiveTab(index === 0 ? 0 : index - 1);
+      if (activeTab() === index) {
+        if (updatedTabs.length > 0) {
+          // fixed sum thinking here
+          const newActiveTab = index >= updatedTabs.length ? updatedTabs.length - 1 : index;
+          setActiveTab(newActiveTab);
+  
+          // update editorContent and editorInstance
+          const newContent = updatedTabs[newActiveTab].content;
+          setEditorContent(newContent);
+          const instance = editorInstance();
+          if (instance) {
+            instance.setValue(newContent);
+          }
+        } else {
+          // if no tabs left, clear the editor
+          setActiveTab(0);
+          setEditorContent("");
+          const instance = editorInstance();
+          if (instance) {
+            instance.setValue("");
+          }
+        }
       }
     }, 300);
   };
+  
 
   const addTab = () => {
-    const instance = editorInstance();
-    if (instance) {
-      batch(() => {
-        // save content
-        const updatedTabs = tabs().map((tab, i) =>
-          i === activeTab() ? { ...tab, content: editorContent() } : tab
-        );
-        const newTab = { content: `-- hello!`, closing: false, opening: true, key: nextTabKey() };
-        setTabs([...updatedTabs, newTab]);
-        setNextTabKey(nextTabKey() + 1);
-        setActiveTab(updatedTabs.length); // set active tab to the new tab
-      });
-  
-      setTimeout(() => {
-        setTabs(tabs().map(tab => tab.opening ? { ...tab, opening: false } : tab));
-      }, 300);
-    }
-  };
+  const instance = editorInstance();
+  if (instance) {
+    batch(() => {
+      // save the content of the current active tab
+      const updatedTabs = tabs().map((tab, i) =>
+        i === activeTab() ? { ...tab, content: editorContent() } : tab
+      );
+
+      // add the new tab
+      const newTab = { content: `-- hello!`, closing: false, opening: true, key: nextTabKey() };
+      setTabs([...updatedTabs, newTab]);
+      setNextTabKey(nextTabKey() + 1);
+
+      // switch to the new tab
+      const newActiveTab = updatedTabs.length;
+      setActiveTab(newActiveTab);
+      setEditorContent(newTab.content);
+      instance.setValue(newTab.content);
+    });
+
+    setTimeout(() => {
+      setTabs(tabs().map(tab => tab.opening ? { ...tab, opening: false } : tab));
+    }, 300);
+  }
+};
 
   onMount(async () => {
     await setupTitlebarButtons();
@@ -168,14 +198,18 @@ function App() {
     const instance = editorInstance();
     if (instance) {
       batch(() => {
+        // Save the content of the current active tab
         setTabs(
           tabs().map((tab, i) =>
             i === activeTab() ? { ...tab, content: editorContent() } : tab
           )
         );
+  
+        // Switch to the new tab
         setActiveTab(index);
-        instance.setValue(tabs()[index].content);
-        setEditorContent(tabs()[index].content);
+        const newContent = tabs()[index].content;
+        setEditorContent(newContent);
+        instance.setValue(newContent);
       });
     }
   };
@@ -307,7 +341,7 @@ function App() {
             <div class="tabs flex space-x-2 items-center h-full">
             {tabs().map((tab, index) => (
               <div
-              class={`tab relative cursor-pointer pl-2 pr-2 flex-grow text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md ${
+              class={`tab relative cursor-pointer pl-2 pr-2 flex-grow text-center border-2 border-white/50 hover:border-white active:scale-95 rounded-md ${
                 activeTab() === index ? "border-white/95" : ""
               } ${tab.closing ? 'tab-closing' : ''} ${tab.opening ? 'tab-opening' : ''}`}
               onClick={() => handleTabClick(index)}
