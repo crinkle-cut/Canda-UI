@@ -33,5 +33,7 @@ rand = "0.8"
 base64 = "0.13"
 libc = "0.2"
 obfstr = "0.2"
+tauri-plugin-fs = "2"
+tauri-plugin-dialog = "2"
 
 # just dont change anything here idek why and how this works

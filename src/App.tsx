@@ -5,6 +5,9 @@ import "./App.css";
 import "./output.css";
 import "./input.css";
 
+import { open, save } from '@tauri-apps/plugin-dialog';
+import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
+
 const [editorInstance, setEditorInstance] = createSignal<Monaco.editor.IStandaloneCodeEditor | null>(null);
 
 const customTheme = {
@@ -86,6 +89,12 @@ function App() {
     });
   };
 
+
+  /* ---------------------------------------------- */
+
+
+  /* Tabs */
+
   createEffect(() => {
     const instance = editorInstance();
     const currentTabs = tabs();
@@ -159,6 +168,82 @@ function App() {
     }, 300);
   }
 };
+
+
+/* ---------------------------------------------- */
+
+
+/* Files */
+
+
+const openFile = async () => {
+  try {
+    const filePath = await open({
+      filters: [
+        { name: 'Lua Files', extensions: ['lua'] },
+        { name: 'Text Files', extensions: ['txt'] },
+      ],
+    });
+
+    if (filePath) {
+      const fileContent = await readTextFile(filePath as string);
+
+      const instance = editorInstance();
+      if (instance) {
+        batch(() => {
+          const updatedTabs = tabs().map((tab, i) =>
+            i === activeTab() ? { ...tab, content: editorContent() } : tab
+          );
+
+          const newTab = { content: fileContent, closing: false, opening: true, key: nextTabKey() };
+          setTabs([...updatedTabs, newTab]);
+          setNextTabKey(nextTabKey() + 1);
+
+          const newActiveTab = updatedTabs.length;
+          setActiveTab(newActiveTab);
+          setEditorContent(fileContent);
+          instance.setValue(fileContent);
+        });
+
+        setTimeout(() => {
+          setTabs(tabs().map(tab => tab.opening ? { ...tab, opening: false } : tab));
+        }, 300);
+      }
+    }
+  } catch (error) {
+    console.error('Error opening file:', error);
+  }
+};
+
+const saveFile = async () => {
+  try {
+    const instance = editorInstance();
+    if (!instance) {
+      console.error('Editor instance not found');
+      return;
+    }
+
+    const content = instance.getValue();
+
+    const filePath = await save({
+      filters: [
+        { name: 'Lua Files', extensions: ['lua'] },
+        { name: 'Text Files', extensions: ['txt'] },
+      ],
+    });
+
+    if (filePath) {
+      await writeTextFile(filePath, content);
+      console.log('File saved successfully:', filePath);
+    }
+  } catch (error) {
+    console.error('Error saving file:', error);
+  }
+};
+
+
+  /* ---------------------------------------------- */
+
 
   onMount(async () => {
     await setupTitlebarButtons();
@@ -308,15 +393,15 @@ function App() {
           </div>
           <ul class={`flex flex-col h-full transition-opacity duration-200 ${menuExpanded() ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
             {[
-              { label: "Open file" },
-              { label: "Save file" },
-              { label: "iSpy", extraClass: "" },
+              { label: "Open file", action: openFile },
+              { label: "Save file", action: saveFile },
+              { label: "iSpy" },
               { label: "Workspace", extraClass: "border-b" },
               { label: "Settings", extraClass: "mt-46" },
-            ].map(({ label, extraClass = "" }) => (
+            ].map(({ label, action, extraClass = "" }) => (
               <li
                 class={`p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t border-white/40 ${extraClass}`}
-              >
+                onClick={action}>
                 <div class="select-none cursor-pointer ml-2">{label}</div>
               </li>
             ))}
@@ -325,7 +410,7 @@ function App() {
         {/* Editor container */}
         <div
           ref={(el) => (editorContainer = el)}
-          class={`editor-container select-none flex-grow transition-all duration-300 transform-gpu border-2 border-white/40 hover:border-white/80 ${
+          class={`editor-container rounded-xl select-none flex-grow transition-all duration-300 transform-gpu border-2 border-white/40 hover:border-white/80 ${
             menuExpanded() ? "w-[calc(89%-5rem)]" : "w-[calc(98%-3rem)]"
           }`}
         ></div>
@@ -336,13 +421,13 @@ function App() {
           }`}
         >
           <div
-            class="rounded-lg pb-1 pt-1 pl-3 pr-3 select-none bg-linear-to-t from-white/0 to-black/40 inset-shadow-sm border-2 border-white/50 transition-all duration-100 w-full"
+            class="rounded-xl pb-1 pt-1 pl-3 pr-2 select-none bg-linear-to-t from-white/0 to-black/40 inset-shadow-sm border-2 border-white/50 transition-all duration-100 w-full"
           >
             <div class="tabs flex space-x-2 items-center h-full">
             {tabs().map((tab, index) => (
               <div
-              class={`tab relative cursor-pointer pl-2 pr-2 flex-grow text-center border-2 border-white/50 hover:border-white active:scale-95 rounded-md ${
-                activeTab() === index ? "border-white/95" : ""
+              class={`tab relative cursor-pointer pl-2 pr-2 flex-grow text-center border-2 border-white/50 hover:border-white rounded-lg ${
+                activeTab() === index ? "border-white/95 scale-102" : ""
               } ${tab.closing ? 'tab-closing' : ''} ${tab.opening ? 'tab-opening' : ''}`}
               onClick={() => handleTabClick(index)}
               >
@@ -373,7 +458,7 @@ function App() {
               </div>
             ))}
               <div
-              class="add-tab cursor-pointer pl-2 pr-2 flex-grow-0 text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md"
+              class="add-tab cursor-pointer pl-2 pr-2 ml-1 flex-grow-0 text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md"
               onClick={addTab}
               >
               +
@@ -381,7 +466,7 @@ function App() {
             </div>
           </div>
           {/* New Button Bar */}
-          <div class="flex ml-[15px] border-2 border-white/50 rounded-lg">
+          <div class="flex ml-[15px] border-2 border-white/50 rounded-xl">
             {[
               {
                 icon: (
