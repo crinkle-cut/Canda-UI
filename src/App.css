@@ -169,12 +169,13 @@ main {
 }
 
 .tab {
-  transition: width 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+  transition: width 0.3s ease, opacity 0.3s ease, transform 0.3s ease, border 0.3s ease;
 }
 
 .tab:hover {
   transform: scale(1.02);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+  border: solid 2px rgba(255, 255, 255, 1)
 }
 
 .tab:active {

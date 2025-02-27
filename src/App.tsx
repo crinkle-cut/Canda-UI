@@ -398,7 +398,7 @@ const saveFile = async () => {
             <div class="tabs flex space-x-2 items-center h-full">
             {tabs().map((tab, index) => (
               <div
-              class={`tab relative cursor-pointer pl-2 pr-2 flex-grow text-center border-2 border-white/50 hover:border-white rounded-lg ${
+              class={`tab relative cursor-pointer pl-2 pr-2 flex-grow text-center border-2 border-white/50 rounded-lg ${
                 activeTab() === index ? "border-white/95 scale-102" : ""
               } ${tab.closing ? 'tab-closing' : ''} ${tab.opening ? 'tab-opening' : ''}`}
               onClick={() => handleTabClick(index)}
