@@ -1,5 +1,6 @@
 import { createSignal, onMount, onCleanup, createEffect, batch } from "solid-js";
 import { getCurrentWindow } from '@tauri-apps/api/window';
+import customTheme from "./themes/customTheme.ts" // FINALLY
 import * as Monaco from "monaco-editor";
 import "./App.css";
 import "./output.css";
@@ -9,61 +10,6 @@ import { open, save } from '@tauri-apps/plugin-dialog';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 
 const [editorInstance, setEditorInstance] = createSignal<Monaco.editor.IStandaloneCodeEditor | null>(null);
-
-const customTheme = {
-  base: "vs-dark",
-  inherit: true,
-  rules: [
-    { background: "282828", token: "" },
-    { foreground: "928374", fontStyle: "italic", token: "comment" },
-    { foreground: "83a598", fontStyle: "bold", token: "keyword" },
-    { foreground: "83a598", fontStyle: "bold", token: "storage" },
-    { foreground: "d79921", token: "constant.numeric" },
-    { foreground: "fb4934", fontStyle: "bold", token: "constant" },
-    { foreground: "b16286", fontStyle: "bold", token: "constant.language" },
-    { foreground: "8ec07c", token: "variable.language" },
-    { foreground: "8ec07c", token: "variable.other" },
-    { foreground: "b8bb26", token: "string" },
-    { foreground: "d79921", token: "constant.character.escape" },
-    { foreground: "d79921", token: "string source" },
-    { foreground: "8ec07c", token: "meta.preprocessor" },
-    { foreground: "d65d0e", fontStyle: "bold", token: "keyword.control.import" },
-    { foreground: "fe8019", fontStyle: "bold", token: "entity.name.function" },
-    { foreground: "fe8019", fontStyle: "bold", token: "keyword.other.name-of-parameter.objc" },
-    { fontStyle: "underline", token: "entity.name.type" },
-    { fontStyle: "italic", token: "entity.other.inherited-class" },
-    { fontStyle: "italic", token: "variable.parameter" },
-    { foreground: "b8bb26", token: "storage.type.method" },
-    { fontStyle: "italic", token: "meta.section entity.name.section" },
-    { fontStyle: "italic", token: "declaration.section entity.name.section" },
-    { foreground: "8ec07c", fontStyle: "bold", token: "support.function" },
-    { foreground: "b16286", fontStyle: "bold", token: "support.class" },
-    { foreground: "b16286", fontStyle: "bold", token: "support.type" },
-    { foreground: "d79921", fontStyle: "bold", token: "support.constant" },
-    { foreground: "83a598", fontStyle: "bold", token: "support.variable" },
-    { foreground: "fb4934", token: "keyword.operator.js" },
-    { foreground: "ffffff", background: "9d0006", token: "invalid" },
-    { background: "7c6f64", token: "invalid.deprecated.trailing-whitespace" },
-    { background: "3c3836", token: "text source" },
-    { background: "3c3836", token: "string.unquoted" },
-    { foreground: "928374", token: "meta.tag.preprocessor.xml" },
-    { foreground: "928374", token: "meta.tag.sgml.doctype" },
-    { fontStyle: "italic", token: "string.quoted.docinfo.doctype.DTD" },
-    { foreground: "83a598", token: "meta.tag" },
-    { foreground: "83a598", token: "declaration.tag" },
-    { fontStyle: "bold", token: "entity.name.tag" },
-    { fontStyle: "italic", token: "entity.other.attribute-name" }
-  ],
-  colors: {
-    "editor.foreground": "#c8c8c8",
-    "editor.background": "#0f0f0f",
-    "editor.selectionBackground": "#504945",
-    "editor.lineHighlightBackground": "#1E1E1E",
-    "editorCursor.foreground": "#ebdbb2",
-    "editorWhitespace.foreground": "#BFBFBF",
-    "minimap.background": "#141414"
-  }
-} as Monaco.editor.IStandaloneThemeData;
 
 function App() {
   let editorContainer: HTMLDivElement | null = null;
@@ -106,6 +52,7 @@ function App() {
   });
 
   const closeTab = (index: number) => {
+    if (tabs().length === 1) return;
     const currentTabs = tabs();
     setTabs(
       currentTabs.map((tab, i) => (i === index ? { ...tab, closing: true } : tab))
@@ -248,12 +195,12 @@ const saveFile = async () => {
   onMount(async () => {
     await setupTitlebarButtons();
 
-    Monaco.editor.defineTheme("customTheme", customTheme);
+    Monaco.editor.defineTheme("customTheme", customTheme); // FINALLY WORKED
+    Monaco.editor.setTheme("customTheme");
 
     if (editorContainer) {
-      Monaco.editor.setTheme("customTheme");
       const instance = Monaco.editor.create(editorContainer, {
-        value: tabs()[activeTab()].content, /* aint no way my ass coded this shit 💀💔 */
+        value: tabs()[activeTab()].content,
         language: "lua",
         fontFamily: "'0xProto'",
         fontSize: 14,
@@ -301,7 +248,11 @@ const saveFile = async () => {
 
   return (
     <main class="flex flex-col w-full h-full min-h-screen select-none inset-shadow-sm" id="main">
+
+
       {/* Title bar */}
+
+
       <div
         class="title-bar w-full text-white text-sm font-medium flex items-center justify-center select-none border-b border-white/10 z-30"
         style={{ "-webkit-app-region": "drag" }}
@@ -362,9 +313,17 @@ const saveFile = async () => {
           </svg>
         </div>
       </div>
+
+
       {/* Main content */}
+
+
       <div class="main-content flex h-full relative select-none">
+
+
         {/* Side menu */}
+
+
         <div
           class={`side-menu h-[435px] bg-black/40 border-r-2 border-t-2 border-b-2 border-t-white/40 border-b-white/40 border-r-white/40 rounded-r-xl transition-all duration-300 top-[45px] absolute left-0 overflow-hidden hover:border-r-white/80 hover:border-b-white/80 hover:border-t-white/80 ${
             menuExpanded() ? "max-w-[16.66%] w-full max-h-[435px]" : "max-w-[28px] w-full"
@@ -407,14 +366,22 @@ const saveFile = async () => {
             ))}
           </ul>
         </div>
+
+
         {/* Editor container */}
+
+
         <div
           ref={(el) => (editorContainer = el)}
           class={`editor-container rounded-xl select-none flex-grow transition-all duration-300 transform-gpu border-2 border-white/40 hover:border-white/80 ${
             menuExpanded() ? "w-[calc(89%-5rem)]" : "w-[calc(98%-3rem)]"
           }`}
         ></div>
-        {/* Button bar */}
+
+
+        {/* Bottom bar */}
+
+
         <div
           class={`button-bar flex relative transition-all duration-300 transform-gpu ${
             menuExpanded() ? "w-[calc(89%-5rem)]" : "w-[calc(98%-3rem)]"
@@ -423,6 +390,11 @@ const saveFile = async () => {
           <div
             class="rounded-xl pb-1 pt-1 pl-3 pr-2 select-none bg-linear-to-t from-white/0 to-black/40 inset-shadow-sm border-2 border-white/50 transition-all duration-100 w-full"
           >
+
+
+            {/* Tab bar */}
+
+
             <div class="tabs flex space-x-2 items-center h-full">
             {tabs().map((tab, index) => (
               <div
@@ -449,7 +421,7 @@ const saveFile = async () => {
                 stroke-width="1.5"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                class="lucide lucide-x"
+                class="lucide lucide-x transition-all hover:stroke-white/50 duration-200"
                 >
                 <path d="M18 6 6 18" />
                 <path d="m6 6 12 12" />
@@ -465,7 +437,11 @@ const saveFile = async () => {
               </div>
             </div>
           </div>
+
+
           {/* New Button Bar */}
+
+
           <div class="flex ml-[15px] border-2 border-white/50 rounded-xl">
             {[
               {
