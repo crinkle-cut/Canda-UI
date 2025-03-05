@@ -2,6 +2,7 @@ import { createSignal, onMount, onCleanup, createEffect, batch } from "solid-js"
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import customTheme from "./themes/customTheme.ts" // FINALLY
 import * as Monaco from "monaco-editor";
+import { Minus, Maximize2, X, ChevronRight, AlertTriangle, Unplug, Delete, Play } from "lucide-solid";
 import "./App.css";
 import "./output.css";
 import "./input.css";
@@ -20,6 +21,15 @@ function App() {
   ]);
   const [editorContent, setEditorContent] = createSignal("");
   const [nextTabKey, setNextTabKey] = createSignal(1);
+  const [statusMessage, setStatusMessage] = createSignal<string | null>(null);
+
+  const showStatusMessage = (message: string) => {
+    setStatusMessage(message);
+    setTimeout(() => {
+      setStatusMessage(null);
+    }, 3000); // Message disappears after 3 seconds
+  };
+
 
   const setupTitlebarButtons = async () => {
     const appWindow = await getCurrentWindow();
@@ -192,6 +202,11 @@ const saveFile = async () => {
   /* ---------------------------------------------- */
 
 
+
+
+  const [settingsOpen, setSettingsOpen] = createSignal(false);
+
+
   onMount(async () => {
     await setupTitlebarButtons();
 
@@ -250,6 +265,39 @@ const saveFile = async () => {
     <main class="flex flex-col w-full h-full min-h-screen select-none inset-shadow-sm" id="main">
 
 
+    {settingsOpen() && (
+      <div class="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-md z-50">
+        <div class="bg-black p-6 rounded-xl shadow-xl border border-white/20 w-1/2 max-w-lg settings-enter">
+          <h2 class="text-lg font-semibold text-white">Settings</h2>
+          <p class="text-white/80 mt-2">Modify your preferences here.</p>
+          <button 
+            class="mt-4 px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition"
+            onClick={() => {
+              const el = document.querySelector(".settings-enter");
+              if (el) {
+                el.classList.replace("settings-enter", "settings-exit");
+                setTimeout(() => setSettingsOpen(false), 200);
+              }
+            }}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    )}
+
+    {/* Status Message */}
+    {statusMessage() && (
+      <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 status-message-enter cursor-default">
+      <div class="bg-black border border-white/30 rounded-lg px-4 py-2 shadow-lg">
+        <div class="text-white/90 font-montserrat text-sm flex items-center">
+        <AlertTriangle class="mr-2" size={16} strokeWidth={2} color="white" />
+        {statusMessage()}
+        </div>
+      </div>
+      </div>
+    )}
+
       {/* Title bar */}
 
 
@@ -261,56 +309,13 @@ const saveFile = async () => {
         <p class="z-40 text-white cursor-default text-md pl-2 font-montserrat">Canda</p>
         <div class="flex-grow"></div>
         <div class="pr-2 z-40" id="titlebar-minimize">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#ffffff"
-            stroke-width="1.2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-minus pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100"
-          >
-            <path d="M5 12h14" />
-          </svg>
+        <Minus class="pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100" size={24} strokeWidth={1.2} color="white" />
         </div>
         <div id="titlebar-maximize">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#ffffff"
-            stroke-width="1.2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-maximize-2 pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100"
-          >
-            <polyline points="15 3 21 3 21 9" />
-            <polyline points="9 21 3 21 3 15" />
-            <line x1="21" x2="14" y1="3" y2="10" />
-            <line x1="3" x2="10" y1="21" y2="14" />
-          </svg>
+        <Maximize2 class="pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100" size={24} strokeWidth={1.2} color="white" />
         </div>
         <div id="titlebar-close">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#ffffff"
-            stroke-width="1.2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-x pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100"
-          >
-            <path d="M18 6 6 18" />
-            <path d="m6 6 12 12" />
-          </svg>
+        <X class="pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100" size={28} strokeWidth={1.2} color="white" />
         </div>
       </div>
 
@@ -325,30 +330,16 @@ const saveFile = async () => {
 
 
         <div
-          class={`side-menu h-[435px] bg-black/40 border-r-2 border-t-2 border-b-2 border-t-white/40 border-b-white/40 border-r-white/40 rounded-r-xl transition-all duration-300 top-[45px] absolute left-0 overflow-hidden hover:border-r-white/80 hover:border-b-white/80 hover:border-t-white/80 ${
-            menuExpanded() ? "max-w-[16.66%] w-full max-h-[435px]" : "max-w-[28px] w-full"
+          class={`side-menu h-[435px] bg-zinc-950/60 shadow-black/80 shadow-md border-r-2 border-t-2 border-b-2 border-t-white/40 border-b-white/40 border-r-white/40 rounded-r-md transition-all duration-300 top-[45px] absolute left-0 overflow-hidden ${
+            menuExpanded() ? "max-w-[16.66%] w-full max-h-[435px] ml-4 rounded-l-xl border-l-white/40 border-l-2" : "max-w-[28px] w-full border-l-white/40"
           } flex-shrink-0 whitespace-nowrap`}
+          style={{ height: "calc(100% - 60px)" }}
         >
           <div
             class="pt-2 pb-2 cursor-pointer hover:border-white/80 rounded-xl transform-gpu"
             onClick={() => setMenuExpanded(!menuExpanded())}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class={`lucide lucide-chevron-right transition-all duration-300 transform-gpu hover:scale-110 ${
-                menuExpanded() ? "rotate-180 translate-x-25" : ""
-              }`}
-            >
-              <path d="m9 18 6-6-6-6" />
-            </svg>
+            <ChevronRight class={`transition-all duration-300 transform-gpu hover:scale-110 ${menuExpanded() ? "rotate-180 translate-x-25" : ""}`} size={24} strokeWidth={1.2} />
           </div>
           <ul class={`flex flex-col h-full transition-opacity duration-200 ${menuExpanded() ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
             {[
@@ -356,11 +347,11 @@ const saveFile = async () => {
               { label: "Save file", action: saveFile },
               { label: "iSpy" },
               { label: "Workspace", extraClass: "border-b" },
-              { label: "Settings", extraClass: "mt-46" },
+              { label: "Settings", extraClass: "mt-46", action: () => setSettingsOpen(true) },
             ].map(({ label, action, extraClass = "" }) => (
               <li
                 class={`p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t border-white/40 ${extraClass}`}
-                onClick={action}>
+                onClick={action ? action : undefined}>
                 <div class="select-none cursor-pointer ml-2">{label}</div>
               </li>
             ))}
@@ -370,11 +361,11 @@ const saveFile = async () => {
 
         {/* Editor container */}
 
-
+            
         <div
           ref={(el) => (editorContainer = el)}
-          class={`editor-container rounded-xl select-none flex-grow transition-all duration-300 transform-gpu border-2 border-white/40 hover:border-white/80 ${
-            menuExpanded() ? "w-[calc(89%-5rem)]" : "w-[calc(98%-3rem)]"
+          class={`editor-container rounded-xl rounded-b-md shadow-black shadow-md rounded-tl-md select-none flex-grow transition-all duration-300 transform-gpu border-2 border-white/40 ${
+            menuExpanded() ? "w-[calc(90.5%-6rem)]" : "w-[calc(100%-3rem)]"
           }`}
         ></div>
 
@@ -384,11 +375,11 @@ const saveFile = async () => {
 
         <div
           class={`button-bar flex relative transition-all duration-300 transform-gpu ${
-            menuExpanded() ? "w-[calc(89%-5rem)]" : "w-[calc(98%-3rem)]"
+            menuExpanded() ? "w-[calc(90.5%-6rem)] ml-2" : "w-[calc(100%-3rem)]"
           }`}
         >
           <div
-            class="rounded-xl pb-1 pt-1 pl-3 pr-2 select-none bg-linear-to-t from-white/0 to-black/40 inset-shadow-sm border-2 border-white/50 transition-all duration-100 w-full"
+            class="rounded-md pb-1 pt-1 pl-3 pr-2 select-none bg-zinc-950/60 shadow-black/80 shadow-md inset-shadow-sm border-2 border-white/40 transition-all duration-100 w-full"
           >
 
 
@@ -398,8 +389,8 @@ const saveFile = async () => {
             <div class="tabs flex space-x-2 items-center h-full">
             {tabs().map((tab, index) => (
               <div
-              class={`tab relative cursor-pointer pl-2 pr-2 flex-grow text-center border-2 border-white/50 rounded-lg ${
-                activeTab() === index ? "border-white/95 scale-102" : ""
+              class={`tab relative cursor-pointer pl-2 pr-2 flex-grow text-center border-2 border-white/50 rounded-sm ${
+                activeTab() === index ? "border-white/75 scale-102" : ""
               } ${tab.closing ? 'tab-closing' : ''} ${tab.opening ? 'tab-opening' : ''}`}
               onClick={() => handleTabClick(index)}
               >
@@ -411,26 +402,12 @@ const saveFile = async () => {
                 closeTab(index);
                 }}
               >
-                <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#ffffff"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-x transition-all hover:stroke-white/50 duration-200"
-                >
-                <path d="M18 6 6 18" />
-                <path d="m6 6 12 12" />
-                </svg>
+                <X class="transform-gpu transition-all hover:stroke-white/60 duration-100" size={16} strokeWidth={1.5} color="white" />
               </div>
               </div>
             ))}
               <div
-              class="add-tab cursor-pointer pl-2 pr-2 ml-1 flex-grow-0 text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-md"
+              class="add-tab cursor-pointer pl-2 pr-2 ml-1 flex-grow-0 text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-sm"
               onClick={addTab}
               >
               +
@@ -442,42 +419,30 @@ const saveFile = async () => {
           {/* New Button Bar */}
 
 
-          <div class="flex ml-[15px] border-2 border-white/50 rounded-xl">
+            <div class="flex ml-[5px] border-2 bg-zinc-950/60 rounded-md rounded-br-xl border-white/50 shadow-black/80 shadow-md">
             {[
               {
-                icon: (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-unplug">
-                    <path d="m19 5 3-3"/><path d="m2 22 3-3"/><path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"/>
-                    <path d="M7.5 13.5 10 11"/><path d="M10.5 16.5 13 14"/><path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"/>
-                  </svg>
-                ),
-                extraClass: "duration-200 transition-all"
+              icon: <Unplug size={24} color="#ffffff" strokeWidth={1.2} />,
+              extraClass: "duration-200 duration-150 hover:scale-110 active:scale-90 delay-75 transition-all",
+              action: () => showStatusMessage("Roblox not found...")
               },
               {
-                icon: (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-delete">
-                    <path d="M10 5a2 2 0 0 0-1.344.519l-6.328 5.74a1 1 0 0 0 0 1.481l6.328 5.741A2 2 0 0 0 10 19h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"/>
-                    <path d="m12 9 6 6"/><path d="m18 9-6 6"/>
-                  </svg>
-                ),
-                extraClass: "duration-200 transition-all ml-1"
+              icon: <Delete size={24} color="#ffffff" strokeWidth={1.2} />,
+              extraClass: "ml-1 duration-150 hover:scale-110 active:scale-90 delay-75 transition-all"
               },
               {
-                icon: (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-play">
-                    <polygon points="6 3 20 12 6 21 6 3"/>
-                  </svg>
-                ),
-                extraClass: "duration-200 transition-all ml-1"
+              icon: <Play size={24} color="#ffffff" strokeWidth={1.2} />,
+              extraClass: "ml-1 duration-150 hover:scale-110 active:scale-90 delay-75 transition-all"
               }
-            ].map(({ icon, extraClass }) => (
+            ].map(({ icon, extraClass, action }) => (
               <div
-                class={`rounded-lg p-2 select-none cursor-pointer hover:${extraClass} hover:scale-110 active:scale-90 delay-75 transition-all font-montserrat flex items-center justify-center`}
+              class={`rounded-lg p-2 select-none cursor-pointer hover:${extraClass} transition-all font-montserrat flex items-center justify-center`}
+              onClick={action}
               >
-                {icon}
+              {icon}
               </div>
             ))}
-          </div>
+            </div>
         </div>
       </div>
     </main>

@@ -99,29 +99,28 @@ main {
   justify-content: center;
   align-items: flex-start;
   flex-direction: column;
-  border-radius: 10px;
+  background-color: rgba(39, 39, 42, 0.4);
 }
 
 /* Editor Container */
 .editor-container {
   height: 350px;
   margin: auto;
-  margin-bottom: 10px;
+  margin-bottom: 4px;
   margin-top: 45px;
   margin-right: 15px;
   background-color: #1e1e1e;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
   top: 0;
   left: 0;
+  position: relative;
 }
 
 /* Button Bar */
 .button-bar {
   display: flex;
-  border-radius: 12px;
   margin: auto;
   margin-top: 2px;
   margin-right: 15px;
@@ -132,6 +131,10 @@ main {
 #root, main {
   overflow: hidden;
   border-radius: 10px;
+}
+
+.margin {
+  background-color: #18181b !important;
 }
 
 /* ----------------------------------------- */
@@ -173,12 +176,78 @@ main {
 }
 
 .tab:hover {
-  transform: scale(1.02);
+  transform: scale(1.013);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
-  border: solid 2px rgba(255, 255, 255, 1)
+  border: solid 2px rgba(255, 255, 255, 0.6)
 }
 
 .tab:active {
   transform: scale(0.99);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+
+/* ----------------------------------------- */
+
+
+/* Settings Animations */
+
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeOutScale {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+.settings-enter {
+  animation: fadeInScale 0.4s ease-out forwards;
+}
+
+.settings-exit {
+  animation: fadeOutScale 0.4s ease-in forwards;
+}
+
+
+/* Status Message */
+
+.status-message-enter {
+  animation: slide-up 0.3s ease forwards, slide-down 0.3s ease forwards 2.5s;
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(20px);
+    opacity: 0;
+  }
 }
