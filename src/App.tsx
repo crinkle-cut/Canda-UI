@@ -306,16 +306,16 @@ const saveFile = async () => {
         style={{ "-webkit-app-region": "drag" }}
         data-tauri-drag-region
       >
-        <p class="z-40 text-white cursor-default text-md pl-2 font-montserrat">Canda</p>
+        <p class="z-40 cursor-default text-md pl-2 font-montserrat text-green-300">Canda</p>
         <div class="flex-grow"></div>
         <div class="pr-2 z-40" id="titlebar-minimize">
-        <Minus class="pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100" size={24} strokeWidth={1.2} color="white" />
+        <Minus class="pr-2 transform-gpu transition-all hover:stroke-yellow-300 duration-100" size={24} strokeWidth={1.2} color="white" />
         </div>
         <div id="titlebar-maximize">
         <Maximize2 class="pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100" size={24} strokeWidth={1.2} color="white" />
         </div>
         <div id="titlebar-close">
-        <X class="pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100" size={28} strokeWidth={1.2} color="white" />
+        <X class="pr-2 transform-gpu transition-all hover:stroke-red-500 duration-100" size={28} strokeWidth={1.2} color="white" />
         </div>
       </div>
 
@@ -330,10 +330,10 @@ const saveFile = async () => {
 
 
         <div
-          class={`side-menu h-[435px] bg-zinc-950/60 shadow-black/80 shadow-md border-r-2 border-t-2 border-b-2 border-t-white/40 border-b-white/40 border-r-white/40 rounded-r-md transition-all duration-300 top-[45px] absolute left-0 overflow-hidden ${
-            menuExpanded() ? "max-w-[16.66%] w-full max-h-[435px] ml-4 rounded-l-xl border-l-white/40 border-l-2" : "max-w-[28px] w-full border-l-white/40"
+          class={`side-menu h-[435px] bg-zinc-900 shadow-black/80 shadow-md border-r border-t border-b hover:border-green-400 border-t-zinc-700 border-b-zinc-700 border-r-zinc-700 rounded-r-md transition-all duration-300 top-[35px] absolute left-0 overflow-hidden ${
+            menuExpanded() ? "max-w-[16.66%] w-full ml-[5px] rounded-l-[5px] border-l-zinc-700 border-l" : "max-w-[28px] w-full border-l-zinc-700"
           } flex-shrink-0 whitespace-nowrap`}
-          style={{ height: "calc(100% - 60px)" }}
+          style={{ height: "calc(100% - 40px)" }}
         >
           <div
             class="pt-2 pb-2 cursor-pointer hover:border-white/80 rounded-xl transform-gpu"
@@ -347,7 +347,7 @@ const saveFile = async () => {
               { label: "Save file", action: saveFile },
               { label: "iSpy" },
               { label: "Workspace", extraClass: "border-b" },
-              { label: "Settings", extraClass: "mt-46", action: () => setSettingsOpen(true) },
+              { label: "Settings", extraClass: "mt-52", action: () => setSettingsOpen(true) },
             ].map(({ label, action, extraClass = "" }) => (
               <li
                 class={`p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t border-white/40 ${extraClass}`}
@@ -364,8 +364,8 @@ const saveFile = async () => {
             
         <div
           ref={(el) => (editorContainer = el)}
-          class={`editor-container rounded-xl rounded-b-md shadow-black shadow-md rounded-tl-md select-none flex-grow transition-all duration-300 transform-gpu border-2 border-white/40 ${
-            menuExpanded() ? "w-[calc(90.5%-6rem)]" : "w-[calc(100%-3rem)]"
+          class={`editor-container hover:border-green-400 rounded-b-md shadow-black shadow-md rounded-[5px] select-none flex-grow transition-all duration-300 transform-gpu border border-zinc-700 ${
+            menuExpanded() ? "w-[calc(91%-5rem)]" : "w-[calc(97.2%-1rem)]"
           }`}
         ></div>
 
@@ -375,11 +375,11 @@ const saveFile = async () => {
 
         <div
           class={`button-bar flex relative transition-all duration-300 transform-gpu ${
-            menuExpanded() ? "w-[calc(90.5%-6rem)] ml-2" : "w-[calc(100%-3rem)]"
+            menuExpanded() ? "w-[calc(91%-5rem)] ml-2" : "w-[calc(97.2%-1rem)]"
           }`}
         >
           <div
-            class="rounded-md pb-1 pt-1 pl-3 pr-2 select-none bg-zinc-950/60 shadow-black/80 shadow-md inset-shadow-sm border-2 border-white/40 transition-all duration-100 w-full"
+            class="rounded-md pb-1 pt-1 pl-3 pr-2 select-none bg-zinc-900 shadow-black/80 shadow-md inset-shadow-sm border border-zinc-700 transition-all duration-100 w-full"
           >
 
 
@@ -389,8 +389,8 @@ const saveFile = async () => {
             <div class="tabs flex space-x-2 items-center h-full">
             {tabs().map((tab, index) => (
               <div
-              class={`tab relative cursor-pointer pl-2 pr-2 flex-grow text-center border-2 border-white/50 rounded-sm ${
-                activeTab() === index ? "border-white/75 scale-102" : ""
+              class={`tab relative cursor-pointer pl-2 pr-2 flex-grow text-center border border-zinc-700 rounded-[5px] hover:border-green-400/80 ${
+                activeTab() === index ? "border-green-400/95 scale-102 bg-zinc-800" : ""
               } ${tab.closing ? 'tab-closing' : ''} ${tab.opening ? 'tab-opening' : ''}`}
               onClick={() => handleTabClick(index)}
               >
@@ -407,7 +407,7 @@ const saveFile = async () => {
               </div>
             ))}
               <div
-              class="add-tab cursor-pointer pl-2 pr-2 ml-1 flex-grow-0 text-center border-2 border-white/50 hover:border-white active:scale-95 transition-all duration-200 rounded-sm"
+              class="add-tab cursor-pointer pl-2 pr-2 ml-1 flex-grow-0 text-center border border-zinc-700 hover:border-green-400 active:scale-95 transition-all duration-200 rounded-sm"
               onClick={addTab}
               >
               +
@@ -419,19 +419,19 @@ const saveFile = async () => {
           {/* New Button Bar */}
 
 
-            <div class="flex ml-[5px] border-2 bg-zinc-950/60 rounded-md rounded-br-xl border-white/50 shadow-black/80 shadow-md">
+            <div class="flex ml-[5px] border bg-zinc-900 rounded-[5px] border-zinc-700  shadow-black/80 shadow-md">
             {[
               {
-              icon: <Unplug size={24} color="#ffffff" strokeWidth={1.2} />,
+              icon: <Unplug size={24} color="#ffffff" strokeWidth={1.2} class="hover:stroke-green-400 transition-all duration-150 delay-75" />,
               extraClass: "duration-200 duration-150 hover:scale-110 active:scale-90 delay-75 transition-all",
               action: () => showStatusMessage("Roblox not found...")
               },
               {
-              icon: <Delete size={24} color="#ffffff" strokeWidth={1.2} />,
-              extraClass: "ml-1 duration-150 hover:scale-110 active:scale-90 delay-75 transition-all"
+              icon: <Delete size={24} color="#ffffff" strokeWidth={1.2} class="hover:stroke-green-400 transition-all duration-150 delay-75" />,
+              extraClass: "ml-1 duration-150 hover:scale-110 hover:stroke-green-400 active:scale-90 delay-75 transition-all"
               },
               {
-              icon: <Play size={24} color="#ffffff" strokeWidth={1.2} />,
+              icon: <Play size={24} color="#ffffff" strokeWidth={1.2} class="hover:stroke-green-400 transition-all duration-150 delay-75" />,
               extraClass: "ml-1 duration-150 hover:scale-110 active:scale-90 delay-75 transition-all"
               }
             ].map(({ icon, extraClass, action }) => (
