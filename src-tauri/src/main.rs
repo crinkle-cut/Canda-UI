@@ -11,6 +11,7 @@ fn main() {
     use std::io::{self, Write};
 
     std::thread::spawn(|| loop {
+        protect_memory();
         if detect_debugger() || check_environment() {
             println!("Decompiler detected! Get a load of this nigga!");
             io::stdout().flush().unwrap();
@@ -133,7 +134,9 @@ fn obfuscate_string(s: &str) -> String {
 fn check_environment() -> bool {
     use std::process::Command;
 
-    let suspicious_processes = ["Binary Ninja", "Hopper", "ida64", "ida32", "Ghidra"];
+    let suspicious_processes = [
+    "Binary Ninja", "Hopper", "ida64", "ida32", "Ghidra", "lldb", "gdb", "radare2", "strace", "dtrace"
+];
 
     if let Ok(output) = Command::new("ps").arg("aux").output() {
         let process_list = String::from_utf8_lossy(&output.stdout);
@@ -145,3 +148,10 @@ fn check_environment() -> bool {
     }
     false
 }
+
+#[cfg(target_os = "macos")]
+use libc::mlockall;
+pub fn protect_memory() {
+    unsafe { mlockall(libc::MCL_CURRENT | libc::MCL_FUTURE); }
+}
+
