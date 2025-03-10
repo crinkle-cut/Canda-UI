@@ -46,12 +46,13 @@ const customTheme: Monaco.editor.IStandaloneThemeData = {
   ],
   colors: {
     "editor.foreground": "#c8c8c8",
-    "editor.background": "#18181b",
+    "editor.background": "#282828",
     "editor.selectionBackground": "#504945",
     "editor.lineHighlightBackground": "#1E1E1E",
     "editorCursor.foreground": "#ebdbb2",
     "editorWhitespace.foreground": "#BFBFBF",
-    "minimap.background": "#141414"
+    "minimap.background": "#282828",
+    "editorLineNumber.foreground": "#282828"
   }
 };
 

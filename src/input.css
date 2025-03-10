@@ -7,6 +7,9 @@
     src: url('./fonts/Montserrat-Regular.ttf');
   }
   
-  @theme {
-    --font-montserrat: Montserrat, sans-serif;
-  }
+@theme {
+  --font-montserrat: Montserrat, sans-serif;
+  --color-border1: #727272;
+  --color-border2: #212121;
+  --color-background1: #171717;
+}

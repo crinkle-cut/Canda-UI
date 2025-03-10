@@ -2,7 +2,7 @@ import { createSignal, onMount, onCleanup, createEffect, batch } from "solid-js"
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import customTheme from "./themes/customTheme.ts" // FINALLY
 import * as Monaco from "monaco-editor";
-import { Minus, Maximize2, X, ChevronRight, AlertTriangle, Unplug, Delete, Play } from "lucide-solid";
+import { Minus, Maximize2, X, ChevronRight, AlertTriangle, Unplug, Delete, Play, Plus, Folder, Save, Bolt } from "lucide-solid";
 import "./App.css";
 import "./output.css";
 import "./input.css";
@@ -14,7 +14,6 @@ const [editorInstance, setEditorInstance] = createSignal<Monaco.editor.IStandalo
 
 function App() {
   let editorContainer: HTMLDivElement | null = null;
-  const [menuExpanded, setMenuExpanded] = createSignal(false);
   const [activeTab, setActiveTab] = createSignal(0);
   const [tabs, setTabs] = createSignal<{ content: string, closing: boolean, opening: boolean }[]>([ // Add closing state
     { content: "-- hello!", closing: false, opening: false },
@@ -45,11 +44,6 @@ function App() {
     });
   };
 
-
-  /* ---------------------------------------------- */
-
-
-  /* Tabs */
 
   createEffect(() => {
     const instance = editorInstance();
@@ -121,16 +115,10 @@ function App() {
     });
 
     setTimeout(() => {
-      setTabs(tabs().map(tab => tab.opening ? { ...tab, opening: false } : tab));
+      setTabs(tabs().map(tab => tab.opening ? { ...tab, opening: false } : tab)); // bro ts code is ass idek why i made this shit like this 💔😭
     }, 300);
   }
 };
-
-
-/* ---------------------------------------------- */
-
-
-/* Files */
 
 
 const openFile = async () => {
@@ -199,11 +187,6 @@ const saveFile = async () => {
 };
 
 
-  /* ---------------------------------------------- */
-
-
-
-
   const [settingsOpen, setSettingsOpen] = createSignal(false);
 
 
@@ -261,13 +244,31 @@ const saveFile = async () => {
     }
   };
 
+  const [barVisible, setBarVisible] = createSignal(false);
+  const [isExiting, setIsExiting] = createSignal(false);
+  
+  const handleToggleBar = () => {
+    if (barVisible()) {
+      setIsExiting(true);
+    } else {
+      setBarVisible(true);
+    }
+  };
+  
+  const handleAnimationEnd = () => {
+    if (isExiting()) {
+      setBarVisible(false);
+      setIsExiting(false);
+    }
+  };
+
   return (
-    <main class="flex flex-col w-full h-full min-h-screen select-none inset-shadow-sm" id="main">
+    <main class="flex flex-col w-full h-full min-h-screen select-none inset-shadow-sm bg-gradient-to-br from-border1 to-border2 p-[1px]" id="main">
 
 
     {settingsOpen() && (
-      <div class="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-md z-50">
-        <div class="bg-black p-6 rounded-xl shadow-xl border border-white/20 w-1/2 max-w-lg settings-enter">
+      <div class="fixed inset-0 flex items-center justify-center bg-background1/70 backdrop-blur-md z-50">
+        <div class="bg-background3 p-6 rounded-xl shadow-xl border border-white/20 w-1/2 max-w-lg settings-enter">
           <h2 class="text-lg font-semibold text-white">Settings</h2>
           <p class="text-white/80 mt-2">Modify your preferences here.</p>
           <button 
@@ -285,10 +286,8 @@ const saveFile = async () => {
         </div>
       </div>
     )}
-
-    {/* Status Message */}
     {statusMessage() && (
-      <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 status-message-enter cursor-default">
+      <div class="fixed bottom-4 left-[85.3%] min-w-fit transform -translate-x-1/2 z-50 status-message-enter cursor-default">
       <div class="bg-black border border-white/30 rounded-lg px-4 py-2 shadow-lg">
         <div class="text-white/90 font-montserrat text-sm flex items-center">
         <AlertTriangle class="mr-2" size={16} strokeWidth={2} color="white" />
@@ -297,152 +296,161 @@ const saveFile = async () => {
       </div>
       </div>
     )}
-
-      {/* Title bar */}
-
-
       <div
-        class="title-bar w-full text-white text-sm font-medium flex items-center justify-center select-none border-b border-white/10 z-30"
+        class="title-bar w-[99.8%] rounded-t-[10px] mt-[1px] ml-[1px] mr-[1px] text-white text-sm font-medium flex items-center justify-center select-none z-30"
         style={{ "-webkit-app-region": "drag" }}
         data-tauri-drag-region
       >
-        <p class="z-40 cursor-default text-md pl-2 font-montserrat text-green-300">Canda</p>
+        <p class="z-40 cursor-default text-md pl-2 font-montserrat text-white">Canda</p>
         <div class="flex-grow"></div>
         <div class="pr-2 z-40" id="titlebar-minimize">
-        <Minus class="pr-2 transform-gpu transition-all hover:stroke-yellow-300 duration-100" size={24} strokeWidth={1.2} color="white" />
+          <Minus class="pr-2 transform-gpu transition-all hover:stroke-yellow-300 duration-100" size={24} strokeWidth={1.2} color="white" />
         </div>
         <div id="titlebar-maximize">
-        <Maximize2 class="pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100" size={24} strokeWidth={1.2} color="white" />
+          <Maximize2 class="pr-2 transform-gpu transition-all hover:stroke-white/60 duration-100" size={24} strokeWidth={1.2} color="white" />
         </div>
         <div id="titlebar-close">
-        <X class="pr-2 transform-gpu transition-all hover:stroke-red-500 duration-100" size={28} strokeWidth={1.2} color="white" />
+          <X class="pr-2 transform-gpu transition-all hover:stroke-red-500 duration-100" size={28} strokeWidth={1.2} color="white" />
         </div>
       </div>
 
+      <div class="main-content flex h-full relative select-none rounded-[9px] bg-background1">
+        <div class="content flex flex-col w-full flex-grow rounded-[10px] bg-background1">
 
-      {/* Main content */}
+{barVisible() && (
+  <div
+    class="absolute extracted-bar bottom-0 z-10 flex mb-[5px] max-w-96 opacity-30 blur-[1px] hover:blur-none hover:opacity-100 transition-all duration-300"
+    style={{
+      display: barVisible() || isExiting() ? 'flex' : 'none',
+      left: '20%',
+      transform: 'translateX(-80%)',
+    }}
+  >
+    <div
+      classList={{
+        'min-w-40 w-40 flex h-12 space-x-1 border-[1px] shadow-md shadow-black/60 border-border1 bg-background3 hover:border-zinc-300 p-1.5 inset-shadow-sm inset-shadow-black/60 rounded-full transition-all duration-300': true,
+        'animate-expand-in-2': barVisible() && !isExiting(),
+        'animate-shrink-out-2': isExiting(),
+      }}
+      onAnimationEnd={handleAnimationEnd}
+    >
+      <div class="w-full h-full rounded-l-[100px] rounded-r-[20px] bg-gradient-to-b from-border3 to-border4 p-[1px] shadow-md shadow-black/60 transition-all duration-250 hover:scale-105 active:scale-95">
+        <button class="w-full h-full flex items-center justify-center rounded-l-[100px] rounded-r-[20px] bg-background2 transition" onClick={openFile}>
+          <Folder size={22} strokeWidth={1.2} />
+        </button>
+      </div>
+      <div class="w-full h-full rounded-r-[3px] rounded-l-[3px] bg-gradient-to-b from-border3 to-border4 p-[1px] shadow-md shadow-black/60 transition-all duration-250 hover:scale-105 active:scale-95">
+        <button class="w-full h-full flex items-center justify-center rounded-r-[3px] rounded-l-[3px] bg-background2 transition" onClick={saveFile}>
+          <Save size={22} strokeWidth={1.2} />
+        </button>
+      </div>
+      <div class="w-full h-full rounded-r-[100px] rounded-l-[20px] bg-gradient-to-b from-border3 to-border4 p-[1px] shadow-md shadow-black/60 transition-all duration-300 hover:scale-105 active:scale-95">
+        <button class="w-full h-full flex items-center justify-center rounded-r-[100px] rounded-l-[20px] bg-background2 transition" onClick={() => setSettingsOpen(true)}>
+          <Bolt size={22} strokeWidth={1.2} />
+        </button>
+      </div>
+    </div>
 
-
-      <div class="main-content flex h-full relative select-none">
-
-
-        {/* Side menu */}
-
-
+    <div
+      classList={{
+        'min-w-[397px] flex h-12 space-x-4 gap-[4px] border-[1px] shadow-md shadow-black/60 border-border1 hover:border-zinc-300 bg-background3 p-1.5 pl-1.5 inset-shadow-sm inset-shadow-black/60 rounded-full transition-all duration-300': true,
+        'animate-expand-in': barVisible() && !isExiting(),
+        'animate-shrink-out': isExiting(),
+      }}
+      onAnimationEnd={handleAnimationEnd}
+    >
+      {tabs().map((tab, index) => (
         <div
-          class={`side-menu h-[435px] bg-zinc-900 shadow-black/80 shadow-md border-r border-t border-b hover:border-green-400 border-t-zinc-700 border-b-zinc-700 border-r-zinc-700 rounded-r-md transition-all duration-300 top-[35px] absolute left-0 overflow-hidden ${
-            menuExpanded() ? "max-w-[16.66%] w-full ml-[5px] rounded-l-[5px] border-l-zinc-700 border-l" : "max-w-[28px] w-full border-l-zinc-700"
-          } flex-shrink-0 whitespace-nowrap`}
-          style={{ height: "calc(100% - 40px)" }}
+          classList={{
+            'tab relative cursor-pointer w-full text-center rounded-[5px] transition-all duration-200': true,
+            '': activeTab() === index,
+            'tab-closing': tab.closing,
+            'tab-opening': tab.opening,
+          }}
+          style={{
+            'border-radius': index === 0 ? '100px 20px 20px 100px' : '5px',
+          }}
+          onClick={() => handleTabClick(index)}
         >
           <div
-            class="pt-2 pb-2 cursor-pointer hover:border-white/80 rounded-xl transform-gpu"
-            onClick={() => setMenuExpanded(!menuExpanded())}
+            classList={{
+        'w-full h-full bg-gradient-to-b from-border3 to-border4 p-[1px] shadow-md shadow-black/60 transition-all duration-250 active:scale-95': true,
+        'rounded-l-[100px] rounded-r-[20px]': index === 0,
+        'rounded-[4px]': index !== 0,
+            }}
           >
-            <ChevronRight class={`transition-all duration-300 transform-gpu hover:scale-110 ${menuExpanded() ? "rotate-180 translate-x-25" : ""}`} size={24} strokeWidth={1.2} />
+            <button
+        classList={{
+          'w-full h-full flex items-center justify-center bg-background2 transition': true,
+          'rounded-l-[100px] rounded-r-[20px]': index === 0,
+          'rounded-[4px]': index !== 0,
+        }}
+            >
+        <text class="text-white">Tab {index + 1}</text>
+            </button>
           </div>
-          <ul class={`flex flex-col h-full transition-opacity duration-200 ${menuExpanded() ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-            {[
-              { label: "Open file", action: openFile },
-              { label: "Save file", action: saveFile },
-              { label: "iSpy" },
-              { label: "Workspace", extraClass: "border-b" },
-              { label: "Settings", extraClass: "mt-52", action: () => setSettingsOpen(true) },
-            ].map(({ label, action, extraClass = "" }) => (
-              <li
-                class={`p-2 w-full transition-all duration-300 hover:bg-white/10 active:bg-white/0 flex-none transform-gpu flex items-center border-t border-white/40 ${extraClass}`}
-                onClick={action ? action : undefined}>
-                <div class="select-none cursor-pointer ml-2">{label}</div>
-              </li>
-            ))}
-          </ul>
+          <div
+            class="close-tab absolute top-0 right-0 mt-1.5 mr-1.5 cursor-pointer"
+            onClick={(e) => {
+        e.stopPropagation();
+        closeTab(index);
+            }}
+          >
+            <X size={20} strokeWidth={1.2} />
+          </div>
         </div>
-
-
-        {/* Editor container */}
-
-            
-        <div
-          ref={(el) => (editorContainer = el)}
-          class={`editor-container hover:border-green-400 rounded-b-md shadow-black shadow-md rounded-[5px] select-none flex-grow transition-all duration-300 transform-gpu border border-zinc-700 ${
-            menuExpanded() ? "w-[calc(91%-5rem)]" : "w-[calc(97.2%-1rem)]"
-          }`}
-        ></div>
-
-
-        {/* Bottom bar */}
-
-
-        <div
-          class={`button-bar flex relative transition-all duration-300 transform-gpu ${
-            menuExpanded() ? "w-[calc(91%-5rem)] ml-2" : "w-[calc(97.2%-1rem)]"
-          }`}
-        >
-          <div
-            class="rounded-md pb-1 pt-1 pl-3 pr-2 select-none bg-zinc-900 shadow-black/80 shadow-md inset-shadow-sm border border-zinc-700 transition-all duration-100 w-full"
-          >
-
-
-            {/* Tab bar */}
-
-
-            <div class="tabs flex space-x-2 items-center h-full">
-            {tabs().map((tab, index) => (
-              <div
-              class={`tab relative cursor-pointer pl-2 pr-2 flex-grow text-center border border-zinc-700 rounded-[5px] hover:border-green-400/80 ${
-                activeTab() === index ? "border-green-400/95 scale-102 bg-zinc-800" : ""
-              } ${tab.closing ? 'tab-closing' : ''} ${tab.opening ? 'tab-opening' : ''}`}
-              onClick={() => handleTabClick(index)}
-              >
-              Tab {index + 1}
-              <div
-                class="close-tab absolute top-0 right-0 mt-1 mr-1 cursor-pointer"
-                onClick={(e) => {
-                e.stopPropagation();
-                closeTab(index);
-                }}
-              >
-                <X class="transform-gpu transition-all hover:stroke-white/60 duration-100" size={16} strokeWidth={1.5} color="white" />
+      ))}
+      <div
+        class="add-tab cursor-pointer flex-grow-0 text-center active:scale-95 transition-all duration-200 rounded-r-[100px] rounded-l-[20px]"
+        onClick={addTab}
+      >
+        <div class="w-10 h-full rounded-r-[100px] rounded-l-[20px] bg-gradient-to-b from-border3 to-border4 p-[1px] shadow-md shadow-black/60 transition-all duration-250 hover:scale-105 active:scale-95">
+          <button class="w-full h-full flex items-center justify-center rounded-r-[100px] rounded-l-[20px] bg-background2 transition">
+            <Plus size={20} strokeWidth={1.2} />
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+        <div class="editor relative flex-grow overflow-hidden mt-[35px] mr-[5px] ml-[5px] mb-[5px] p-[1px] rounded-b-[6px] rounded-t-[6px] select-none flex flex-col bg-gradient-to-br from-border1 to-border2">
+          <div class="absolute bottom-0 right-[59.5%] -translate-x-1/2 flex justify-center items-center space-x-3 pb-[6px] z-10 opacity-30 hover:opacity-100 blur-[1px] hover:blur-none transition-all duration-300">
+            <div class="button-container flex w-40 h-12 items-center space-x-1 border-[1px] border-border1 hover:border-zinc-300 bg-background3/60 backdrop-blur-lg p-1.5 inset-shadow-sm inset-shadow-black/60 shadow-md shadow-black/60 rounded-full transition-all duration-300">
+              <div class="w-full h-full rounded-l-[100px] rounded-r-[20px] bg-gradient-to-b from-border3 to-border4 p-[1px] shadow-md shadow-black/60 transition-all duration-250 hover:scale-105 active:scale-95">
+                <button class="w-full h-full flex items-center justify-center rounded-l-[100px] rounded-r-[20px] bg-background2 transition" onClick={() => showStatusMessage("Roblox not found...")}>
+                  <Unplug size={22} strokeWidth={1.2} />
+                </button>
               </div>
+              <div class="w-full h-full rounded-[4px] bg-gradient-to-b from-border3 to-border4 p-[1px] shadow-md shadow-black/60 transition-all duration-250 hover:scale-105 active:scale-95">
+                <button class="w-full h-full flex items-center justify-center rounded-[4px] bg-background2 transition">
+                  <Delete size={22} strokeWidth={1.2} />
+                </button>
               </div>
-            ))}
-              <div
-              class="add-tab cursor-pointer pl-2 pr-2 ml-1 flex-grow-0 text-center border border-zinc-700 hover:border-green-400 active:scale-95 transition-all duration-200 rounded-sm"
-              onClick={addTab}
-              >
-              +
+              <div class="w-full h-full rounded-r-[100px] rounded-l-[20px] bg-gradient-to-b from-border3 to-border4 p-[1px] shadow-md shadow-black/60 transition-all duration-250 hover:scale-105 active:scale-95">
+                <button class="w-full h-full flex items-center justify-center rounded-r-[100px] rounded-l-[20px] bg-background2 transition">
+                  <Play size={22} strokeWidth={1.2} />
+                </button>
+              </div>
+            </div>
+
+            <div class="w-12 h-12 items-center justify-center rounded-full border-[1px] shadow-md shadow-black/60 border-border1 hover:border-zinc-300 bg-background3 p-1.5 inset-shadow-sm inset-shadow-black/60 transition-all duration-300">
+              <div class="w-full h-full rounded-full bg-gradient-to-b from-border3 to-border4 p-[1px] shadow-md shadow-black/60 transition-all duration-250 hover:scale-105 active:scale-95" onClick={handleToggleBar}>
+                <button class="w-full h-full flex items-center justify-center rounded-full bg-background2 transition">
+                  <ChevronRight
+                    size={22}
+                    strokeWidth={1.2}
+                    classList={{
+                      'transform transition-transform duration-300': true,
+                      'rotate-180 translate-x-[-1px]': barVisible(),
+                    }}
+                  />
+                </button>
               </div>
             </div>
           </div>
 
-
-          {/* New Button Bar */}
-
-
-            <div class="flex ml-[5px] border bg-zinc-900 rounded-[5px] border-zinc-700  shadow-black/80 shadow-md">
-            {[
-              {
-              icon: <Unplug size={24} color="#ffffff" strokeWidth={1.2} class="hover:stroke-green-400 transition-all duration-150 delay-75" />,
-              extraClass: "duration-200 duration-150 hover:scale-110 active:scale-90 delay-75 transition-all",
-              action: () => showStatusMessage("Roblox not found...")
-              },
-              {
-              icon: <Delete size={24} color="#ffffff" strokeWidth={1.2} class="hover:stroke-green-400 transition-all duration-150 delay-75" />,
-              extraClass: "ml-1 duration-150 hover:scale-110 hover:stroke-green-400 active:scale-90 delay-75 transition-all"
-              },
-              {
-              icon: <Play size={24} color="#ffffff" strokeWidth={1.2} class="hover:stroke-green-400 transition-all duration-150 delay-75" />,
-              extraClass: "ml-1 duration-150 hover:scale-110 active:scale-90 delay-75 transition-all"
-              }
-            ].map(({ icon, extraClass, action }) => (
-              <div
-              class={`rounded-lg p-2 select-none cursor-pointer hover:${extraClass} transition-all font-montserrat flex items-center justify-center`}
-              onClick={action}
-              >
-              {icon}
-              </div>
-            ))}
-            </div>
+          <div ref={(el) => (editorContainer = el)} class="flex-grow overflow-hidden rounded-b-[6px] rounded-t-[6px]"></div>
+        </div>
         </div>
       </div>
     </main>
