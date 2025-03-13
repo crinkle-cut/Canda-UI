@@ -85,8 +85,6 @@ main {
   justify-content: center;
   min-height: 100vh;
   flex-grow: 1 !important;
-  -webkit-backdrop-filter: blur(2px) !important;
-  backdrop-filter: blur(2px) !important;
 }
 
 .tab {
@@ -96,6 +94,10 @@ main {
 /* Title Bar */
 .title-bar {
   height: 30px !important;
+  width: calc(100% - 12px);
+  margin-right: 5px;
+  margin-left: 5px;
+  margin-top: 6px;
   font-size: 14px;
   font-weight: medium;
   display: flex;
@@ -103,22 +105,25 @@ main {
   justify-content: center;
   position: fixed;
   top: 0;
-  left: 0;
   z-index: 1000;
 }
 
 /* Main Content */
 .main-content {
   padding-top: 0px;
-  flex-grow: 1;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   flex-direction: column;
+  height: calc(100% - 100px);
 }
 
-.editor {
-  height: calc(100% - 0px) !important;
+.full-ass-bar {
+  width: calc(100% - 12px);
+}
+
+.monaco-editor {
+  outline: 0 !important;
 }
 
 /* Editor Container */
@@ -149,10 +154,6 @@ main {
 #root, main {
   overflow: hidden;
   border-radius: 10px;
-}
-
-.margin {
-  background-color: #18181b !important;
 }
 
 .extracted-bars {
@@ -267,96 +268,4 @@ main {
     transform: translateY(20px);
     opacity: 0;
   }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-@keyframes expand-in {
-  0% {
-    transform: translateX(-200%) translateY(-15%) scaleX(0.8);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(100%) translateY(-15%) scaleX(1);
-    opacity: 1;
-  }
-}
-
-@keyframes shrink-out {
-  0% {
-    transform: translateX(100%) translateY(-15%) scaleX(1);
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(-200%) translateY(-15%) scaleX(0.8);
-    opacity: 0;
-  }
-}
-
-.animate-expand-in {
-  transform-origin: left center;
-  animation: expand-in 0.4s ease-out forwards;
-  will-change: transform, opacity;
-}
-
-.animate-shrink-out {
-  transform-origin: left center;
-  animation: shrink-out 0.6s ease-in forwards;
-  will-change: transform, opacity;
-}
-
-
-
-
-
-
-
-@keyframes expand-in-2 {
-  0% {
-    transform: translateX(-100%) translateY(-15%) scaleX(0.8);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(240%) translateY(-15%) scaleX(1);
-    opacity: 1;
-  }
-}
-
-@keyframes shrink-out-2 {
-  0% {
-    transform: translateX(240%) translateY(-15%) scaleX(1);
-    opacity: 1;
-  }
-  50$ {
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(-100%) translateY(-15%) scaleX(0.8);
-    opacity: 0;
-  }
-}
-
-.animate-expand-in-2 {
-  transform-origin: left center;
-  animation: expand-in-2 0.4s ease-out forwards;
-  will-change: transform, opacity;
-}
-
-.animate-shrink-out-2 {
-  transform-origin: left center;
-  animation: shrink-out-2 0.6s ease-in forwards;
-  will-change: transform, opacity;
 }

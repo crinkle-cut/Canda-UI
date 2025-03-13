@@ -34,7 +34,7 @@ fn main() {
                     &window,
                     NSVisualEffectMaterial::HudWindow,
                     Some(NSVisualEffectState::FollowsWindowActiveState),
-                    Some(12.0),
+                    Some(15.0),
                 )
                 .expect(obfstr!(
                     "Unsupported platform! 'apply_vibrancy' is only supported on macOS"
