@@ -2,7 +2,7 @@ import { createSignal, onMount, onCleanup, createEffect, batch } from "solid-js"
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import customTheme from "./themes/customTheme.ts" // FINALLY
 import * as Monaco from "monaco-editor";
-import { Minus, Maximize2, X, AlertTriangle, Unplug, Delete, Play, Plus, Folder, Save, Bolt } from "lucide-solid";
+import { Minus, Maximize2, X, AlertTriangle, Unplug, ChevronRight, Delete, Play, Plus, Folder, Save, Bolt } from "lucide-solid";
 import "./App.css";
 import "./output.css";
 import "./input.css";
@@ -244,32 +244,131 @@ const saveFile = async () => {
     }
   };
 
+  const [activeSettingsTab, setActiveSettingsTab] = createSignal(1);
+
   return (
     <main class="flex flex-col w-full h-screen max-h-screen select-none inset-shadow-sm" id="main">
       <div class="flex flex-col w-full h-screen max-h-screen select-none inset-shadow-sm rounded-[15px] border-1 border-border1/80 bg-white/10">
       {settingsOpen() && (
-        <div class="fixed inset-0 flex items-center justify-center bg-background1/70 backdrop-blur-md z-50">
-        <div class="bg-background3 p-6 rounded-xl shadow-xl border border-white/20 w-1/2 max-w-lg settings-enter">
-          <h2 class="text-lg font-semibold text-white">Settings</h2>
-          <p class="text-white/80 mt-2">Modify your preferences here.</p>
-          <button 
-          class="mt-4 px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition"
-          onClick={() => {
-            const el = document.querySelector(".settings-enter");
-            if (el) {
-            el.classList.replace("settings-enter", "settings-exit");
+        <div class="fixed inset-0 flex items-center justify-center bg-background1/70 z-50 rounded-[15px] transition-all duration-100">
+          <div class="bg-black/40 backdrop-blur-xs p-6 rounded-xl shadow-xl border border-white/20 w-5/6 h-5/6 settings-enter flex flex-col">
+            <h2 class="text-lg font-semibold text-white">Settings</h2>
+        
+            <div class="flex space-x-1 mt-4 w-full">
+        <button
+          class={`tab-btn px-4 py-2 w-full rounded-sm rounded-l-2xl border border-white/30 ${
+            activeSettingsTab() === 1 ? 'bg-zinc-700/50' : 'bg-black/20'
+          } text-white rounded-lg hover:bg-white/20 transition`}
+          onClick={() => setActiveSettingsTab(1)}
+        >
+          Main
+        </button>
+        <button
+          class={`tab-btn px-4 py-2 w-full rounded-sm border border-white/30 ${
+            activeSettingsTab() === 2 ? 'bg-zinc-700/50' : 'bg-black/20'
+          } text-white rounded-lg hover:bg-white/20 transition`}
+          onClick={() => setActiveSettingsTab(2)}
+        >
+          Security
+        </button>
+        <button
+          class={`tab-btn px-4 py-2 w-full rounded-sm border border-white/30 ${
+            activeSettingsTab() === 3 ? 'bg-zinc-700/50' : 'bg-black/20'
+          } text-white rounded-lg hover:bg-white/20 transition`}
+          onClick={() => setActiveSettingsTab(3)}
+        >
+          Appearance
+        </button>
+        <button
+          class={`tab-btn px-4 py-2 w-full rounded-r-2xl rounded-sm border border-white/30 ${
+            activeSettingsTab() === 4 ? 'bg-zinc-700/50' : 'bg-black/20'
+          } text-white rounded-lg hover:bg-white/20 transition`}
+          onClick={() => setActiveSettingsTab(4)}
+        >
+          Advanced
+        </button>
+            </div>
+        
+            <div class="flex-grow mt-4 rounded-lg overflow-scroll">
+        {activeSettingsTab() === 1 && (
+          <div class="text-white">
+            {/* Main Settings Content */}
+            <div class="flex flex-col space-y-1">
+              <div class="flex flex-row w-full bg-black/40 border border-white/30 rounded-t-2xl rounded-b-sm p-2">
+          <p>Auto Execute</p>
+          <label class="switch ml-auto">
+            <input type="checkbox" />
+            <span class="slider"></span>
+          </label>
+              </div>
+              <div class="flex flex-row w-full bg-black/40 border border-white/30 rounded-sm p-2">
+          <p>HWID Spoofer</p>
+          <label class="switch ml-auto">
+            <input type="checkbox" />
+            <span class="slider"></span>
+          </label>
+              </div>
+              <div class="flex flex-row w-full bg-black/40 border border-white/30 rounded-sm p-2">
+          <p>Dump all Scripts on Join</p>
+          <label class="switch ml-auto">
+            <input type="checkbox" />
+            <span class="slider"></span>
+          </label>
+              </div>
+              <div class="flex flex-row w-full bg-black/40 border border-white/30 rounded-sm p-2">
+          <p>Script Manager</p>
+          <label class="Chevr ml-auto mr-3">
+            <ChevronRight size={22} strokeWidth={1.2} />
+          </label>
+              </div>
+              <div class="flex flex-row w-full bg-black/40 border border-white/30 rounded-b-2xl rounded-t-sm p-2">
+          <p>Error Handler</p>
+          <label class="switch ml-auto">
+            <input type="checkbox" />
+            <span class="slider"></span>
+          </label>
+              </div>
+            </div>
+          </div>
+        )}
+        {activeSettingsTab() === 2 && (
+          <div class="text-white">
+            {/* Security Settings Content */}
+            Security Settings
+          </div>
+        )}
+        {activeSettingsTab() === 3 && (
+          <div class="text-white">
+            {/* Appearance Settings Content */}
+            Appearance Settings
+          </div>
+        )}
+        {activeSettingsTab() === 4 && (
+          <div class="text-white">
+            {/* Advanced Settings Content */}
+            Advanced Settings
+          </div>
+        )}
+            </div>
+        
+            <button
+        class="mt-2 px-4 py-2 bg-black/20 text-white rounded-2xl border border-white/30 hover:bg-white/20 transition"
+        onClick={() => {
+          const el = document.querySelector('.settings-enter');
+          if (el) {
+            el.classList.replace('settings-enter', 'settings-exit');
             setTimeout(() => setSettingsOpen(false), 200);
-            }
-          }}
-          >
-          Close
-          </button>
-        </div>
+          }
+        }}
+            >
+        Close
+            </button>
+          </div>
         </div>
       )}
       {statusMessage() && (
-        <div class="fixed bottom-4 left-[85.3%] min-w-fit transform -translate-x-1/2 z-50 status-message-enter cursor-default">
-        <div class="bg-black border border-white/30 rounded-lg px-4 py-2 shadow-lg">
+        <div class="fixed bottom-[67px] min-w-fit transform -translate-x-1/2 z-50 status-message-enter cursor-default" style="left: calc(100% - 105px);">
+        <div class="bg-black/60 border border-white/30 rounded-[5px] px-4 py-2 shadow-lg">
           <div class="text-white/90 font-montserrat text-sm flex items-center">
           <AlertTriangle class="mr-2" size={16} strokeWidth={2} color="white" />
           {statusMessage()}
@@ -379,7 +478,7 @@ const saveFile = async () => {
               >
                 <div
                 classList={{
-                  'w-full h-full border border-white/50 bg-white/10 p-[1px] shadow-md shadow-black/60 transition-all duration-250 active:scale-95': true,
+                  'w-full h-full border border-white/50 bg-white/10 p-[1px] shadow-md shadow-black/60 transition-all duration-250 active:scale-98' : true,
                   'rounded-l-[100px] rounded-r-[20px]': index === 0,
                   'rounded-[4px]': index !== 0,
                 }}
