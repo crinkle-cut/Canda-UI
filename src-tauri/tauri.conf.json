@@ -21,6 +21,8 @@
         "titleBarStyle": "Transparent",
         "resizable": true,
         "hiddenTitle": true,
+        "minHeight": 260,
+        "minWidth": 500,
         "shadow": false
       }
     ],
