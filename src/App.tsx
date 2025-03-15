@@ -15,20 +15,20 @@ const [editorInstance, setEditorInstance] = createSignal<Monaco.editor.IStandalo
 function App() {
   let editorContainer: HTMLDivElement | null = null;
   const [activeTab, setActiveTab] = createSignal(0);
-  const [tabs, setTabs] = createSignal<{ content: string, closing: boolean, opening: boolean }[]>([ // Add closing state
+  const [tabs, setTabs] = createSignal<{ content: string, closing: boolean, opening: boolean }[]>([
     { content: "-- hello!", closing: false, opening: false },
   ]);
   const [editorContent, setEditorContent] = createSignal("");
   const [nextTabKey, setNextTabKey] = createSignal(1);
   const [statusMessage, setStatusMessage] = createSignal<string | null>(null);
+  const [settingsOpen, setSettingsOpen] = createSignal(false);
 
   const showStatusMessage = (message: string) => {
     setStatusMessage(message);
     setTimeout(() => {
       setStatusMessage(null);
-    }, 3000); // Message disappears after 3 seconds
+    }, 3000);
   };
-
 
   const setupTitlebarButtons = async () => {
     const appWindow = await getCurrentWindow();
@@ -44,12 +44,11 @@ function App() {
     });
   };
 
-
   createEffect(() => {
     const instance = editorInstance();
     const currentTabs = tabs();
     const activeIdx = activeTab();
-  
+
     if (instance && currentTabs.length > 0 && activeIdx >= 0 && activeIdx < currentTabs.length) {
       instance.setValue(currentTabs[activeIdx].content);
     }
@@ -61,18 +60,16 @@ function App() {
     setTabs(
       currentTabs.map((tab, i) => (i === index ? { ...tab, closing: true } : tab))
     );
-  
+
     setTimeout(() => {
       const updatedTabs = currentTabs.filter((_, i) => i !== index);
       setTabs(updatedTabs);
-  
+
       if (activeTab() === index) {
         if (updatedTabs.length > 0) {
-          // fixed sum thinking here
           const newActiveTab = index >= updatedTabs.length ? updatedTabs.length - 1 : index;
           setActiveTab(newActiveTab);
-  
-          // update editorContent and editorInstance
+
           const newContent = updatedTabs[newActiveTab].content;
           setEditorContent(newContent);
           const instance = editorInstance();
@@ -80,7 +77,6 @@ function App() {
             instance.setValue(newContent);
           }
         } else {
-          // if no tabs left, clear the editor
           setActiveTab(0);
           setEditorContent("");
           const instance = editorInstance();
@@ -91,109 +87,100 @@ function App() {
       }
     }, 300);
   };
-  
 
   const addTab = () => {
-  const instance = editorInstance();
-  if (instance) {
-    batch(() => {
-      // save the content of the current active tab
-      const updatedTabs = tabs().map((tab, i) =>
-        i === activeTab() ? { ...tab, content: editorContent() } : tab
-      );
-
-      // add the new tab
-      const newTab = { content: `-- hello!`, closing: false, opening: true, key: nextTabKey() };
-      setTabs([...updatedTabs, newTab]);
-      setNextTabKey(nextTabKey() + 1);
-
-      // switch to the new tab
-      const newActiveTab = updatedTabs.length;
-      setActiveTab(newActiveTab);
-      setEditorContent(newTab.content);
-      instance.setValue(newTab.content);
-    });
-
-    setTimeout(() => {
-      setTabs(tabs().map(tab => tab.opening ? { ...tab, opening: false } : tab)); // bro ts code is ass idek why i made this shit like this 💔😭
-    }, 300);
-  }
-};
-
-
-const openFile = async () => {
-  try {
-    const filePath = await open({
-      filters: [
-        { name: 'Lua Files', extensions: ['lua'] },
-        { name: 'Text Files', extensions: ['txt'] },
-      ],
-    });
-
-    if (filePath) {
-      const fileContent = await readTextFile(filePath as string);
-
-      const instance = editorInstance();
-      if (instance) {
-        batch(() => {
-          const updatedTabs = tabs().map((tab, i) =>
-            i === activeTab() ? { ...tab, content: editorContent() } : tab
-          );
-
-          const newTab = { content: fileContent, closing: false, opening: true, key: nextTabKey() };
-          setTabs([...updatedTabs, newTab]);
-          setNextTabKey(nextTabKey() + 1);
-
-          const newActiveTab = updatedTabs.length;
-          setActiveTab(newActiveTab);
-          setEditorContent(fileContent);
-          instance.setValue(fileContent);
-        });
-
-        setTimeout(() => {
-          setTabs(tabs().map(tab => tab.opening ? { ...tab, opening: false } : tab));
-        }, 300);
-      }
-    }
-  } catch (error) {
-    console.error('Error opening file:', error);
-  }
-};
-
-const saveFile = async () => {
-  try {
     const instance = editorInstance();
-    if (!instance) {
-      console.error('Editor instance not found');
-      return;
+    if (instance) {
+      batch(() => {
+        const updatedTabs = tabs().map((tab, i) =>
+          i === activeTab() ? { ...tab, content: editorContent() } : tab
+        );
+
+        const newTab = { content: `-- hello!`, closing: false, opening: true, key: nextTabKey() };
+        setTabs([...updatedTabs, newTab]);
+        setNextTabKey(nextTabKey() + 1);
+
+        const newActiveTab = updatedTabs.length;
+        setActiveTab(newActiveTab);
+        setEditorContent(newTab.content);
+        instance.setValue(newTab.content);
+      });
+
+      setTimeout(() => {
+        setTabs(tabs().map(tab => tab.opening ? { ...tab, opening: false } : tab));
+      }, 300);
     }
+  };
 
-    const content = instance.getValue();
+  const openFile = async () => {
+    try {
+      const filePath = await open({
+        filters: [
+          { name: 'Lua Files', extensions: ['lua'] },
+          { name: 'Text Files', extensions: ['txt'] },
+        ],
+      });
 
-    const filePath = await save({
-      filters: [
-        { name: 'Lua Files', extensions: ['lua'] },
-        { name: 'Text Files', extensions: ['txt'] },
-      ],
-    });
+      if (filePath) {
+        const fileContent = await readTextFile(filePath as string);
 
-    if (filePath) {
-      await writeTextFile(filePath, content);
-      console.log('File saved successfully:', filePath);
+        const instance = editorInstance();
+        if (instance) {
+          batch(() => {
+            const updatedTabs = tabs().map((tab, i) =>
+              i === activeTab() ? { ...tab, content: editorContent() } : tab
+            );
+
+            const newTab = { content: fileContent, closing: false, opening: true, key: nextTabKey() };
+            setTabs([...updatedTabs, newTab]);
+            setNextTabKey(nextTabKey() + 1);
+
+            const newActiveTab = updatedTabs.length;
+            setActiveTab(newActiveTab);
+            setEditorContent(fileContent);
+            instance.setValue(fileContent);
+          });
+
+          setTimeout(() => {
+            setTabs(tabs().map(tab => tab.opening ? { ...tab, opening: false } : tab));
+          }, 300);
+        }
+      }
+    } catch (error) {
+      console.error('Error opening file:', error);
     }
-  } catch (error) {
-    console.error('Error saving file:', error);
-  }
-};
+  };
 
+  const saveFile = async () => {
+    try {
+      const instance = editorInstance();
+      if (!instance) {
+        console.error('Editor instance not found');
+        return;
+      }
 
-  const [settingsOpen, setSettingsOpen] = createSignal(false);
+      const content = instance.getValue();
 
+      const filePath = await save({
+        filters: [
+          { name: 'Lua Files', extensions: ['lua'] },
+          { name: 'Text Files', extensions: ['txt'] },
+        ],
+      });
+
+      if (filePath) {
+        await writeTextFile(filePath, content);
+        console.log('File saved successfully:', filePath);
+      }
+    } catch (error) {
+      console.error('Error saving file:', error);
+    }
+  };
 
   onMount(async () => {
     await setupTitlebarButtons();
 
-    Monaco.editor.defineTheme("customTheme", customTheme); // FINALLY WORKED
+    Monaco.editor.defineTheme("customTheme", customTheme);
     Monaco.editor.setTheme("customTheme");
 
     if (editorContainer) {
@@ -209,7 +196,7 @@ const saveFile = async () => {
       setEditorInstance(instance);
 
       instance.onDidChangeModelContent(() => {
-        setEditorContent(instance.getValue()); // update editorContent on changes
+        setEditorContent(instance.getValue());
       });
 
       const resizeObserver = new ResizeObserver(() => {
@@ -228,14 +215,12 @@ const saveFile = async () => {
     const instance = editorInstance();
     if (instance) {
       batch(() => {
-        // Save the content of the current active tab
         setTabs(
           tabs().map((tab, i) =>
             i === activeTab() ? { ...tab, content: editorContent() } : tab
           )
         );
-  
-        // Switch to the new tab
+
         setActiveTab(index);
         const newContent = tabs()[index].content;
         setEditorContent(newContent);
@@ -366,6 +351,8 @@ const saveFile = async () => {
           </div>
         </div>
       )}
+
+
       {statusMessage() && (
         <div class="fixed bottom-[67px] min-w-fit transform -translate-x-1/2 z-50 status-message-enter cursor-default" style="left: calc(100% - 105px);">
         <div class="bg-black/60 border border-white/30 rounded-[5px] px-4 py-2 shadow-lg">
@@ -376,6 +363,8 @@ const saveFile = async () => {
         </div>
         </div>
       )}
+
+
       <div
         class="title-bar bg-black/30 rounded-full text-white text-sm font-medium flex items-center justify-center select-none z-30 transition-all active:scale-99"
         style={{ "-webkit-app-region": "drag" }}
@@ -395,6 +384,7 @@ const saveFile = async () => {
         </div>
       </div>
 
+
       <div class="main-content mt-10 mr-[5px] ml-[5px] flex flex-col relative select-none rounded-[10px] bg-white/0">
         <div class="content flex flex-col w-full h-full rounded-[10px] min-h-0">
 
@@ -404,6 +394,8 @@ const saveFile = async () => {
         </div>
         </div>
       </div>
+
+      
       <div class="full-ass-bar flex flex-row items-center m-auto mb-[5px] rounded-full bg-black/30">
       <div class="flex max-h-12 justify-center items-center space-x-3 z-10 transition-all duration-300">
             <div class="button-container p-1.5 flex w-40 h-12 items-center space-x-1 transition-all duration-300">
