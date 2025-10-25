@@ -1,5 +1,6 @@
 import { createSignal, onMount, onCleanup, createEffect, batch } from "solid-js";
 import { getCurrentWindow } from '@tauri-apps/api/window';
+import { invoke } from '@tauri-apps/api/core';
 import customTheme from "./themes/customTheme.ts" // FINALLY
 import * as Monaco from "monaco-editor";
 import { Minus, Maximize2, X, AlertTriangle, Unplug, ChevronRight, Delete, Play, Plus, Folder, Save, Bolt } from "lucide-solid";
@@ -22,6 +23,7 @@ function App() {
   const [nextTabKey, setNextTabKey] = createSignal(1);
   const [statusMessage, setStatusMessage] = createSignal<string | null>(null);
   const [settingsOpen, setSettingsOpen] = createSignal(false);
+  const [isExecuting, setIsExecuting] = createSignal(false);
 
   const showStatusMessage = (message: string) => {
     setStatusMessage(message);
@@ -187,6 +189,41 @@ function App() {
       console.error('Error saving file:', error);
     }
   };
+
+  const executeScript = async () => {
+    if (isExecuting()) return;
+
+    const instance = editorInstance();
+    if (!instance) {
+      showStatusMessage('Editor not ready');
+      return;
+    }
+
+    const script = instance.getValue();
+    setIsExecuting(true);
+
+    try {
+      const response = await invoke<string>('execute_script', { script });
+      showStatusMessage(response && response.length > 0 ? response : 'Script sent successfully');
+    } catch (error) {
+      console.error('Error executing script:', error);
+      let message = 'Failed to execute script';
+      if (typeof error === 'string') {
+        message = error;
+      } else if (error instanceof Error) {
+        message = error.message;
+      } else if (error && typeof error === 'object' && 'message' in error) {
+        const value = (error as { message?: unknown }).message;
+        if (typeof value === 'string') {
+          message = value;
+        }
+      }
+      showStatusMessage(message);
+    } finally {
+      setIsExecuting(false);
+    }
+  };
+
 
   onMount(async () => {
     await setupTitlebarButtons();
@@ -466,7 +503,11 @@ function App() {
                 </button>
                 </div>
               <div class="w-full h-full rounded-r-[100px] rounded-l-[20px] border border-white/50 bg-white/10 p-[1px] shadow-md shadow-black/60 transition-all duration-250 hover:scale-105 active:scale-95">
-                <button class="w-full h-full flex items-center justify-center rounded-r-[100px] rounded-l-[20px] transition cursor-pointer">
+                <button
+                  class="w-full h-full flex items-center justify-center rounded-r-[100px] rounded-l-[20px] transition cursor-pointer disabled:opacity-60 disabled:pointer-events-none disabled:cursor-not-allowed"
+                  onClick={executeScript}
+                  disabled={isExecuting()}
+                >
                   <Play size={22} strokeWidth={1.2} />
                 </button>
               </div>
