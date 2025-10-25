@@ -126,6 +126,17 @@ main {
   outline: 0 !important;
 }
 
+.monaco-editor .view-lines {
+  font-feature-settings: normal !important;
+  font-variant-ligatures: none !important;
+  text-rendering: optimizeLegibility !important;
+}
+
+.monaco-editor .cursors-layer .cursor {
+  transform: translateZ(0) !important;
+  will-change: transform !important;
+}
+
 /* Editor Container */
 .editor-container {
   margin: auto;

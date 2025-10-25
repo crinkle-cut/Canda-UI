@@ -44,6 +44,22 @@ function App() {
     });
   };
 
+  const ensureEditorFont = async (): Promise<FontFaceSet | null> => {
+    if (typeof document === "undefined" || !("fonts" in document)) {
+      return null;
+    }
+
+    const fontFaceSet = document.fonts;
+    try {
+      await fontFaceSet.load(`14px "0xProto"`);
+      await fontFaceSet.ready;
+    } catch (error) {
+      console.warn("Failed to load editor font:", error);
+    }
+
+    return fontFaceSet;
+  };
+
   createEffect(() => {
     const instance = editorInstance();
     const currentTabs = tabs();
@@ -180,6 +196,8 @@ function App() {
   onMount(async () => {
     await setupTitlebarButtons();
 
+    const fontFaceSet = await ensureEditorFont();
+
     Monaco.editor.defineTheme("customTheme", customTheme);
     Monaco.editor.setTheme("customTheme");
 
@@ -187,13 +205,26 @@ function App() {
       const instance = Monaco.editor.create(editorContainer, {
         value: tabs()[activeTab()].content,
         language: "lua",
-        fontFamily: "'0xProto'",
+        fontFamily: "0xProto, monospace",
         fontSize: 14,
         automaticLayout: true,
         cursorSmoothCaretAnimation: "on",
+        disableMonospaceOptimizations: true,
+        fontLigatures: false,
       });
 
       setEditorInstance(instance);
+
+      const remeasureFontMetrics = () => {
+        Monaco.editor.remeasureFonts();
+        instance.layout();
+      };
+
+      remeasureFontMetrics();
+
+      if (fontFaceSet) {
+        fontFaceSet.addEventListener("loadingdone", remeasureFontMetrics);
+      }
 
       instance.onDidChangeModelContent(() => {
         setEditorContent(instance.getValue());
@@ -206,6 +237,9 @@ function App() {
 
       onCleanup(() => {
         resizeObserver.disconnect();
+        if (fontFaceSet) {
+          fontFaceSet.removeEventListener("loadingdone", remeasureFontMetrics);
+        }
         instance.dispose();
       });
     }
