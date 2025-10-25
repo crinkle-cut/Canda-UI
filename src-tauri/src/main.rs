@@ -6,6 +6,55 @@ use std::process;
 use tauri::Listener;
 use tauri::Manager;
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState};
+use std::io::Write;
+use std::net::{IpAddr, Ipv4Addr, Shutdown, SocketAddr, TcpStream};
+use std::time::Duration;
+
+#[tauri::command]
+fn execute_script(script: String) -> Result<String, String> {
+    let script_bytes = script.as_bytes();
+    let total_len = script_bytes
+        .len()
+        .checked_add(1)
+        .ok_or_else(|| "Script is too large to send".to_string())?;
+
+    if total_len > u32::MAX as usize {
+        return Err("Script is too large to send".into());
+    }
+
+    let mut header = [0u8; 16];
+    header[8..12].copy_from_slice(&(total_len as u32).to_le_bytes());
+
+    let timeout = Duration::from_millis(3000);
+    let addr = SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 5553);
+
+    let mut stream = TcpStream::connect_timeout(&addr, timeout)
+        .map_err(|e| format!("Failed to connect: {}", e))?;
+
+    stream
+        .set_write_timeout(Some(timeout))
+        .map_err(|e| format!("Failed to set write timeout: {}", e))?;
+    stream
+        .set_read_timeout(Some(timeout))
+        .map_err(|e| format!("Failed to set read timeout: {}", e))?;
+
+    stream
+        .write_all(&header)
+        .map_err(|e| format!("Failed to write header: {}", e))?;
+    stream
+        .write_all(script_bytes)
+        .map_err(|e| format!("Failed to write script: {}", e))?;
+    stream
+        .write_all(&[0u8])
+        .map_err(|e| format!("Failed to write null terminator: {}", e))?;
+
+    stream
+        .flush()
+        .map_err(|e| format!("Failed to flush stream: {}", e))?;
+    let _ = stream.shutdown(Shutdown::Both);
+
+    Ok("Script executed successfully".to_string())
+}
 
 fn main() {
     use std::io::{self, Write};
@@ -23,6 +72,7 @@ fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
+        .invoke_handler(tauri::generate_handler![execute_script])
         .setup(|app| {
             // Get the main window of the application
             let window = app.get_webview_window(obfstr!("main")).unwrap();
