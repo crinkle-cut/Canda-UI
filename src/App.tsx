@@ -44,6 +44,17 @@ function App() {
     });
   };
 
+  const ensureEditorFontLoaded = async () => {
+    if ("fonts" in document) {
+      try {
+        await document.fonts.load("14px '0xProto'");
+        await document.fonts.ready;
+      } catch (error) {
+        console.warn("Failed to preload editor font", error);
+      }
+    }
+  };
+
   createEffect(() => {
     const instance = editorInstance();
     const currentTabs = tabs();
@@ -180,6 +191,8 @@ function App() {
   onMount(async () => {
     await setupTitlebarButtons();
 
+    await ensureEditorFontLoaded();
+
     Monaco.editor.defineTheme("customTheme", customTheme);
     Monaco.editor.setTheme("customTheme");
 
@@ -187,15 +200,42 @@ function App() {
       const instance = Monaco.editor.create(editorContainer, {
         value: tabs()[activeTab()].content,
         language: "lua",
-        fontFamily: "'0xProto'",
+        fontFamily: "'0xProto', monospace",
         fontSize: 14,
         automaticLayout: true,
         cursorSmoothCaretAnimation: "on",
         fontLigatures: false,
         letterSpacing: 0,
+        disableMonospaceOptimizations: true,
       });
 
       setEditorInstance(instance);
+
+      const refreshFontMetrics = () => {
+        Monaco.editor.remeasureFonts();
+        instance.layout();
+      };
+
+      refreshFontMetrics();
+
+      let lastDevicePixelRatio = window.devicePixelRatio;
+      const handleWindowResize = () => {
+        if (window.devicePixelRatio !== lastDevicePixelRatio) {
+          lastDevicePixelRatio = window.devicePixelRatio;
+          refreshFontMetrics();
+        }
+      };
+
+      const handleFontLoading = () => {
+        refreshFontMetrics();
+      };
+
+      if ("fonts" in document) {
+        document.fonts.addEventListener?.("loadingdone", handleFontLoading);
+        document.fonts.addEventListener?.("loadingerror", handleFontLoading);
+      }
+
+      window.addEventListener("resize", handleWindowResize);
 
       instance.onDidChangeModelContent(() => {
         setEditorContent(instance.getValue());
@@ -208,6 +248,11 @@ function App() {
 
       onCleanup(() => {
         resizeObserver.disconnect();
+        window.removeEventListener("resize", handleWindowResize);
+        if ("fonts" in document) {
+          document.fonts.removeEventListener?.("loadingdone", handleFontLoading);
+          document.fonts.removeEventListener?.("loadingerror", handleFontLoading);
+        }
         instance.dispose();
       });
     }
