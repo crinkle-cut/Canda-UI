@@ -191,6 +191,8 @@ function App() {
         fontSize: 14,
         automaticLayout: true,
         cursorSmoothCaretAnimation: "on",
+        fontLigatures: false,
+        letterSpacing: 0,
       });
 
       setEditorInstance(instance);
