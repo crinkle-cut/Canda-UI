@@ -276,6 +276,71 @@ function App() {
     }
   };
 
+  const executeScript = async () => {
+    const instance = editorInstance();
+    if (!instance) {
+      showStatusMessage("Editor not found");
+      return;
+    }
+
+    const script = instance.getValue();
+    console.log("Executing script with length:", script.length);
+    
+    try {
+      // Try to use Node.js net module (available in Tauri environment)
+      const net = await import('net').catch(() => null);
+      
+      if (net) {
+        console.log("Node.js net module available, using TCP connection");
+        // Node.js environment - use TCP connection
+        // Create 16-byte header with script length + 1 at offset 8
+        const header = Buffer.alloc(16, 0);
+        header.writeUInt32LE(Buffer.byteLength(script) + 1, 8);
+        
+        // Create the complete message: header + script + null terminator
+        const message = Buffer.concat([
+          header,
+          Buffer.from(script),
+          Buffer.from([0])
+        ]);
+        
+        console.log("Sending message with total length:", message.length);
+        
+        // Create TCP connection
+        const socket = net.createConnection(5553, '127.0.0.1');
+        
+        // Set timeout
+        socket.setTimeout(3000);
+        
+        socket.on('connect', () => {
+          console.log("TCP connection established");
+          socket.write(message);
+          socket.end();
+          showStatusMessage("Script executed successfully");
+        });
+        
+        socket.on('error', (error) => {
+          console.error('TCP connection error:', error);
+          showStatusMessage("Connection failed");
+        });
+        
+        socket.on('timeout', () => {
+          console.log("TCP connection timeout");
+          socket.destroy();
+          showStatusMessage("Connection timeout");
+        });
+      } else {
+        console.log("Node.js net module not available, running in browser environment");
+        // Browser environment - use fetch with WebSocket fallback
+        showStatusMessage("TCP not available in browser");
+      }
+      
+    } catch (error) {
+      console.error('Error executing script:', error);
+      showStatusMessage("Execution failed");
+    }
+  };
+
   const [activeSettingsTab, setActiveSettingsTab] = createSignal(1);
 
   return (
@@ -466,7 +531,7 @@ function App() {
                 </button>
                 </div>
               <div class="w-full h-full rounded-r-[100px] rounded-l-[20px] border border-white/50 bg-white/10 p-[1px] shadow-md shadow-black/60 transition-all duration-250 hover:scale-105 active:scale-95">
-                <button class="w-full h-full flex items-center justify-center rounded-r-[100px] rounded-l-[20px] transition cursor-pointer">
+                <button class="w-full h-full flex items-center justify-center rounded-r-[100px] rounded-l-[20px] transition cursor-pointer" onClick={executeScript}>
                   <Play size={22} strokeWidth={1.2} />
                 </button>
               </div>
